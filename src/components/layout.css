@@ -1,0 +1,31 @@
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.appbar {
+  width: 100%;
+  background-color: #012e3e !important;
+  color: #ffffff !important;
+}
+
+.main-content {
+  padding: 16px;
+}
+.nav-typo {
+  color: white;
+}
+
+.nav-button {
+  color: #ffffff !important; /* Default white */
+  text-transform: none;
+}
+
+.nav-button:hover {
+  color: #90caf9 !important; /* Light blue on hover (optional) */
+}
+
+.active-button {
+  color: #f50057 !important; /* Secondary/pink for active */
+}
