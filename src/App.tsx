@@ -1,7 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./page/HomePage.page";
-import DepartmentList from "./page/DepartmentList.page";
+
 import Layout from "./components/LayOut.component";
+import DepartmentList from "./page/DepartmentList.page";
 
 function App() {
   return (

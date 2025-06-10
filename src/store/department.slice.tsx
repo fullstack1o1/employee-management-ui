@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Api, type DepartmentResponse } from "../myApi";
+import { Api, type DepartmentResponse, type DepartmentRequest } from "../myApi";
 
 export enum APIStatus {
   PENDING,
@@ -7,6 +7,7 @@ export enum APIStatus {
   FAILED,
   IDLE,
 }
+
 export interface IApiResponse<T> {
   data: T;
   error?: string;
@@ -15,6 +16,7 @@ export interface IApiResponse<T> {
 
 interface IState {
   departments: IApiResponse<DepartmentResponse[]>;
+  departmentCreate: IApiResponse<DepartmentResponse>;
 }
 
 const api = new Api({
@@ -24,12 +26,21 @@ const api = new Api({
 
 const initialState: IState = {
   departments: { data: [], status: APIStatus.IDLE },
+  departmentCreate: { data: {} as DepartmentResponse, status: APIStatus.IDLE },
 };
 
 export const fetchDepartments = createAsyncThunk(
   "department/fetchDepartments",
   async () => {
     const res = await api.department.departmentList();
+    console.log(res.data);
+    return res.data;
+  }
+);
+export const createDepartment = createAsyncThunk(
+  "department/createDepartment",
+  async ({ data }: { data: DepartmentRequest }) => {
+    const res = await api.department.departmentCreate(data);
     console.log(res.data);
     return res.data;
   }
@@ -52,6 +63,18 @@ export const departmentSlice = createSlice({
       .addCase(fetchDepartments.fulfilled, (state, action) => {
         state.departments.status = APIStatus.FULLFILLED;
         state.departments.data = action.payload;
+      })
+      //create department
+      .addCase(createDepartment.pending, (state) => {
+        state.departmentCreate.status = APIStatus.PENDING;
+      })
+      .addCase(createDepartment.rejected, (state) => {
+        state.departmentCreate.status = APIStatus.FAILED;
+        state.departmentCreate.error = "Some Error Occured";
+      })
+      .addCase(createDepartment.fulfilled, (state, action) => {
+        state.departmentCreate.status = APIStatus.FULLFILLED;
+        state.departmentCreate.data = action.payload;
       });
   },
 });

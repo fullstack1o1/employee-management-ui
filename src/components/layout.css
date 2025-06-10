@@ -6,7 +6,7 @@
 
 .appbar {
   width: 100%;
-  background-color: #012e3e !important;
+  background-color: #014963 !important;
   color: #ffffff !important;
 }
 
@@ -18,14 +18,14 @@
 }
 
 .nav-button {
-  color: #ffffff !important; /* Default white */
+  color: #a5a9a0f8 !important;
   text-transform: none;
 }
 
 .nav-button:hover {
-  color: #90caf9 !important; /* Light blue on hover (optional) */
+  color: #90caf9 !important;
 }
 
 .active-button {
-  color: #f50057 !important; /* Secondary/pink for active */
+  color: #ffffff !important;
 }
