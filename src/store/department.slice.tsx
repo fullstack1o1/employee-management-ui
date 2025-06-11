@@ -7,6 +7,13 @@ export enum APIStatus {
   FAILED,
   IDLE,
 }
+// export const APIStatus = {
+//   PENDING: "PENDING",
+//   FULLFILLED: "FULLFILLED",
+//   FAILED: "FAILED",
+//   IDLE: "IDLE",
+// } as const;
+// export type APIStatus = keyof typeof APIStatus;
 
 export interface IApiResponse<T> {
   data: T;
@@ -81,6 +88,7 @@ export const departmentSlice = createSlice({
 
 departmentSlice.actions = {
   fetchDepartments,
+  createDepartment,
 };
 
 export default departmentSlice.reducer;

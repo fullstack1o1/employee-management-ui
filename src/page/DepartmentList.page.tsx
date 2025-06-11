@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hook";
-import {
-  APIStatus,
-  createDepartment,
-  fetchDepartments,
-} from "../store/department.slice";
+import { APIStatus, fetchDepartments } from "../store/department.slice";
 import {
   Button,
   CircularProgress,
@@ -19,15 +15,18 @@ import {
 } from "@mui/material";
 import "./departmentList.css";
 import DepartmentAction from "../components/DepartmentAction.component";
-import type { DepartmentRequest } from "../myApi";
 
 const DepartmentList = () => {
   const dispatch = useAppDispatch();
+
   const allDepartments = useAppSelector(
     (state) => state.departmentSlice.departments.data
   );
   const allDepartmentsStatus = useAppSelector(
     (state) => state.departmentSlice.departments.status
+  );
+  const createDepartmentStatus = useAppSelector(
+    (state) => state.departmentSlice.departmentCreate.status
   );
   const [open, setOpen] = useState(false);
 
@@ -40,14 +39,16 @@ const DepartmentList = () => {
     dispatch(fetchDepartments());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (createDepartmentStatus === APIStatus.FULLFILLED) {
+      dispatch(fetchDepartments());
+    }
+  }, [createDepartmentStatus]);
+
   return (
     <div className="deptList-container">
       <Button onClick={handleOpen}>Create department</Button>
-      <DepartmentAction
-        open={open}
-        openModal={handleOpen}
-        closeModal={handleClose}
-      />
+      <DepartmentAction open={open} closeModal={handleClose} />
       {allDepartmentsStatus === APIStatus.PENDING ? (
         <CircularProgress />
       ) : (
