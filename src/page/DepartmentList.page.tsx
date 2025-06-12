@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hook";
-import { APIStatus, fetchDepartments } from "../store/department.slice";
+import {
+  APIStatus,
+  deleteDepartment,
+  fetchDepartments,
+} from "../store/department.slice";
 import {
   Button,
   CircularProgress,
@@ -14,7 +18,7 @@ import {
   TableRow,
 } from "@mui/material";
 import "./departmentList.css";
-import DepartmentAction from "../components/DepartmentAction.component";
+import DepartmentCreate from "../components/DepartmentCreate.component";
 
 const DepartmentList = () => {
   const dispatch = useAppDispatch();
@@ -28,28 +32,48 @@ const DepartmentList = () => {
   const createDepartmentStatus = useAppSelector(
     (state) => state.departmentSlice.departmentCreate.status
   );
+  // const deleteDepartmentStatus = useAppSelector(
+  //   (state) => state.departmentSlice.departmentDelete.status
+  // );
+
+  //modal function
   const [open, setOpen] = useState(false);
+  const [departments, setDepartments] = useState(allDepartments);
+
+  console.log("allDepartments", allDepartments);
 
   const handleOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => setOpen(false);
-  useEffect(() => {
-    dispatch(fetchDepartments());
-  }, [dispatch]);
 
   useEffect(() => {
+    if (allDepartments.length === 0) {
+      dispatch(fetchDepartments());
+    }
     if (createDepartmentStatus === APIStatus.FULLFILLED) {
       dispatch(fetchDepartments());
     }
   }, [createDepartmentStatus]);
 
+  useEffect(() => {
+    setDepartments(allDepartments);
+  }, [allDepartments]);
+
+  const handleDeleteClick = (id: number) => {
+    dispatch(deleteDepartment({ id }));
+    setDepartments((prev) =>
+      prev.filter((departments) => departments.departmentId !== id)
+    );
+  };
+
   return (
     <div className="deptList-container">
       <Button onClick={handleOpen}>Create department</Button>
-      <DepartmentAction open={open} closeModal={handleClose} />
-      {allDepartmentsStatus === APIStatus.PENDING ? (
+      <DepartmentCreate open={open} closeModal={handleClose} />
+      {allDepartmentsStatus === APIStatus.PENDING &&
+      departments.length === 0 ? (
         <CircularProgress />
       ) : (
         <TableContainer component={Paper}>
@@ -62,7 +86,7 @@ const DepartmentList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {allDepartments.map((dept) => (
+              {departments.map((dept) => (
                 <TableRow
                   key={dept.departmentId}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -76,13 +100,22 @@ const DepartmentList = () => {
                   <TableCell
                     component="th"
                     scope="row"
-                    align="inherit"
+                    align="right"
                     sx={{ padding: "normal" }}
                   >
-                    <Stack direction="row" spacing={2}>
-                      <Button variant="contained" color="error">
+                    <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => {
+                          if (dept.departmentId) {
+                            handleDeleteClick(dept.departmentId);
+                          }
+                        }}
+                      >
                         Delete
                       </Button>
+
                       <Button variant="contained" color="success">
                         Update
                       </Button>

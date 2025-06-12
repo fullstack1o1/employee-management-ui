@@ -16,23 +16,26 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-type DepartmentActionProps = {
+type DepartmentCreateProps = {
   open: boolean;
   closeModal: () => void;
 };
 
-const DepartmentAction: React.FC<DepartmentActionProps> = ({
+const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
   open,
   closeModal,
 }) => {
   const dispatch = useAppDispatch();
+
   const [deptName, setDeptName] = useState("");
+
   const handleClick = (e: React.FormEvent) => {
     e.preventDefault();
     dispatch(createDepartment({ data: { departmentName: deptName } }));
     console.log(deptName);
     closeModal();
   };
+
   return (
     <div>
       <Modal
@@ -64,4 +67,4 @@ const DepartmentAction: React.FC<DepartmentActionProps> = ({
   );
 };
 
-export default DepartmentAction;
+export default DepartmentCreate;

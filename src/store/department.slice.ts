@@ -24,6 +24,7 @@ export interface IApiResponse<T> {
 interface IState {
   departments: IApiResponse<DepartmentResponse[]>;
   departmentCreate: IApiResponse<DepartmentResponse>;
+  departmentDelete: IApiResponse<void>;
 }
 
 const api = new Api({
@@ -34,6 +35,7 @@ const api = new Api({
 const initialState: IState = {
   departments: { data: [], status: APIStatus.IDLE },
   departmentCreate: { data: {} as DepartmentResponse, status: APIStatus.IDLE },
+  departmentDelete: { data: undefined, status: APIStatus.IDLE },
 };
 
 export const fetchDepartments = createAsyncThunk(
@@ -49,6 +51,13 @@ export const createDepartment = createAsyncThunk(
   async ({ data }: { data: DepartmentRequest }) => {
     const res = await api.department.departmentCreate(data);
     console.log(res.data);
+    return res.data;
+  }
+);
+export const deleteDepartment = createAsyncThunk(
+  "department/deleteDepartment",
+  async ({ id }: { id: number }) => {
+    const res = await api.department.departmentDelete(id);
     return res.data;
   }
 );
@@ -82,6 +91,18 @@ export const departmentSlice = createSlice({
       .addCase(createDepartment.fulfilled, (state, action) => {
         state.departmentCreate.status = APIStatus.FULLFILLED;
         state.departmentCreate.data = action.payload;
+      })
+      //delete department
+      .addCase(deleteDepartment.pending, (state) => {
+        state.departmentDelete.status = APIStatus.PENDING;
+      })
+      .addCase(deleteDepartment.rejected, (state) => {
+        state.departmentDelete.status = APIStatus.FAILED;
+        state.departmentDelete.error = "Some Error Occured";
+      })
+      .addCase(deleteDepartment.fulfilled, (state, action) => {
+        state.departmentDelete.status = APIStatus.FULLFILLED;
+        state.departmentDelete.data = action.payload;
       });
   },
 });
@@ -89,6 +110,7 @@ export const departmentSlice = createSlice({
 departmentSlice.actions = {
   fetchDepartments,
   createDepartment,
+  deleteDepartment,
 };
 
 export default departmentSlice.reducer;

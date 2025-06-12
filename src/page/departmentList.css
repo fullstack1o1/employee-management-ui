@@ -1,4 +1,9 @@
 .deptList-container {
   margin: auto;
-  width: 80%;
+  width: 60%;
+}
+@media screen and (max-width: 768px) {
+  .deptList-container {
+    width: 90%;
+  }
 }
