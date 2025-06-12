@@ -70,7 +70,10 @@ const DepartmentList = () => {
 
   return (
     <div className="deptList-container">
-      <Button onClick={handleOpen}>Create department</Button>
+      {allDepartmentsStatus !== APIStatus.PENDING && (
+        <Button onClick={handleOpen}>Create department</Button>
+      )}
+
       <DepartmentCreate open={open} closeModal={handleClose} />
       {allDepartmentsStatus === APIStatus.PENDING &&
       departments.length === 0 ? (

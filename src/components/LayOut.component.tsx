@@ -1,4 +1,3 @@
-// src/layout/Layout.tsx
 import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
