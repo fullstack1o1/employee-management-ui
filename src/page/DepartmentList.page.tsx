@@ -29,19 +29,8 @@ const DepartmentList = () => {
   const allDepartmentsStatus = useAppSelector(
     (state) => state.departmentSlice.departments.status
   );
-  const createDepartmentStatus = useAppSelector(
-    (state) => state.departmentSlice.departmentCreate.status
-  );
-  const updateDepartmentStatus = useAppSelector(
-    (state) => state.departmentSlice.departmentUpdate.status
-  );
-  // const deleteDepartmentStatus = useAppSelector(
-  //   (state) => state.departmentSlice.departmentDelete.status
-  // );
-
   //modal function
   const [open, setOpen] = useState(false);
-  const [departments, setDepartments] = useState(allDepartments);
   //state for keeping track of the department to be updated
   const [clickedUpdate, setClickedUpdate] = useState<{
     id: number;
@@ -60,18 +49,10 @@ const DepartmentList = () => {
 
   useEffect(() => {
     dispatch(fetchDepartments());
-  }, [createDepartmentStatus, updateDepartmentStatus]);
-
-  //
-  useEffect(() => {
-    setDepartments(allDepartments);
-  }, [allDepartments]);
+  }, []);
 
   const handleDeleteClick = (id: number) => {
     dispatch(deleteDepartment({ id }));
-    setDepartments((prev) =>
-      prev.filter((departments) => departments.departmentId !== id)
-    );
   };
 
   return (
@@ -86,7 +67,7 @@ const DepartmentList = () => {
         clickedUpdate={clickedUpdate}
       />
       {allDepartmentsStatus === APIStatus.PENDING &&
-      departments.length === 0 ? (
+      allDepartments.length === 0 ? (
         <CircularProgress />
       ) : (
         <TableContainer component={Paper}>
@@ -99,7 +80,7 @@ const DepartmentList = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {departments.map((dept) => (
+              {allDepartments.map((dept) => (
                 <TableRow
                   key={dept.departmentId}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}

@@ -97,6 +97,7 @@ export const departmentSlice = createSlice({
       .addCase(createDepartment.fulfilled, (state, action) => {
         state.departmentCreate.status = APIStatus.FULLFILLED;
         state.departmentCreate.data = action.payload;
+        state.departments.data.push(action.payload); // Add new department
       })
       //delete department
       .addCase(deleteDepartment.pending, (state) => {
@@ -109,6 +110,9 @@ export const departmentSlice = createSlice({
       .addCase(deleteDepartment.fulfilled, (state, action) => {
         state.departmentDelete.status = APIStatus.FULLFILLED;
         state.departmentDelete.data = action.payload;
+        state.departments.data = state.departments.data.filter(
+          (dept) => dept.departmentId !== action.meta.arg.id
+        );
       })
       //update department
       .addCase(updateDepartment.pending, (state) => {
@@ -121,6 +125,11 @@ export const departmentSlice = createSlice({
       .addCase(updateDepartment.fulfilled, (state, action) => {
         state.departmentUpdate.status = APIStatus.FULLFILLED;
         state.departmentUpdate.data = action.payload;
+        state.departments.data = state.departments.data.map((dept) =>
+          dept.departmentId === action.payload.departmentId
+            ? action.payload
+            : dept
+        );
       });
   },
 });
