@@ -18,6 +18,7 @@ interface IState {
   departments: IApiResponse<DepartmentResponse[]>;
   departmentCreate: IApiResponse<DepartmentResponse>;
   departmentDelete: IApiResponse<void>;
+  departmentUpdate: IApiResponse<DepartmentResponse>;
 }
 
 const api = new Api({
@@ -29,8 +30,9 @@ const initialState: IState = {
   departments: { data: [], status: APIStatus.IDLE },
   departmentCreate: { data: {} as DepartmentResponse, status: APIStatus.IDLE },
   departmentDelete: { data: undefined, status: APIStatus.IDLE },
+  departmentUpdate: { data: {} as DepartmentResponse, status: APIStatus.IDLE },
 };
-
+// fetch all departments
 export const fetchDepartments = createAsyncThunk(
   "department/fetchDepartments",
   async () => {
@@ -39,6 +41,7 @@ export const fetchDepartments = createAsyncThunk(
     return res.data;
   }
 );
+// create a new department
 export const createDepartment = createAsyncThunk(
   "department/createDepartment",
   async ({ data }: { data: DepartmentRequest }) => {
@@ -47,10 +50,20 @@ export const createDepartment = createAsyncThunk(
     return res.data;
   }
 );
+// delete a department by its ID
 export const deleteDepartment = createAsyncThunk(
   "department/deleteDepartment",
   async ({ id }: { id: number }) => {
     const res = await api.department.departmentDelete(id);
+    return res.data;
+  }
+);
+
+export const updateDepartment = createAsyncThunk(
+  "department/updateDepartment",
+  async ({ id, data }: { id: number; data: DepartmentResponse }) => {
+    const res = await api.department.departmentUpdate(id, data);
+    console.log("updated data", res.data);
     return res.data;
   }
 );
@@ -96,6 +109,18 @@ export const departmentSlice = createSlice({
       .addCase(deleteDepartment.fulfilled, (state, action) => {
         state.departmentDelete.status = APIStatus.FULLFILLED;
         state.departmentDelete.data = action.payload;
+      })
+      //update department
+      .addCase(updateDepartment.pending, (state) => {
+        state.departmentUpdate.status = APIStatus.PENDING;
+      })
+      .addCase(updateDepartment.rejected, (state) => {
+        state.departmentUpdate.status = APIStatus.FAILED;
+        state.departmentUpdate.error = "Some Error Occured";
+      })
+      .addCase(updateDepartment.fulfilled, (state, action) => {
+        state.departmentUpdate.status = APIStatus.FULLFILLED;
+        state.departmentUpdate.data = action.payload;
       });
   },
 });
@@ -104,6 +129,7 @@ departmentSlice.actions = {
   fetchDepartments,
   createDepartment,
   deleteDepartment,
+  updateDepartment,
 };
 
 export default departmentSlice.reducer;

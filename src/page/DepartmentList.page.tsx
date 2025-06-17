@@ -32,6 +32,9 @@ const DepartmentList = () => {
   const createDepartmentStatus = useAppSelector(
     (state) => state.departmentSlice.departmentCreate.status
   );
+  const updateDepartmentStatus = useAppSelector(
+    (state) => state.departmentSlice.departmentUpdate.status
+  );
   // const deleteDepartmentStatus = useAppSelector(
   //   (state) => state.departmentSlice.departmentDelete.status
   // );
@@ -39,24 +42,27 @@ const DepartmentList = () => {
   //modal function
   const [open, setOpen] = useState(false);
   const [departments, setDepartments] = useState(allDepartments);
-
+  //state for keeping track of the department to be updated
+  const [clickedUpdate, setClickedUpdate] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
   console.log("allDepartments", allDepartments);
 
   const handleOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setClickedUpdate(null);
+    setOpen(false);
+  };
 
   useEffect(() => {
-    if (allDepartments.length === 0) {
-      dispatch(fetchDepartments());
-    }
-    if (createDepartmentStatus === APIStatus.FULLFILLED) {
-      dispatch(fetchDepartments());
-    }
-  }, [createDepartmentStatus]);
+    dispatch(fetchDepartments());
+  }, [createDepartmentStatus, updateDepartmentStatus]);
 
+  //
   useEffect(() => {
     setDepartments(allDepartments);
   }, [allDepartments]);
@@ -70,11 +76,15 @@ const DepartmentList = () => {
 
   return (
     <div className="deptList-container">
+      {/*display create department button only if the status is not pending*/}
       {allDepartmentsStatus !== APIStatus.PENDING && (
         <Button onClick={handleOpen}>Create department</Button>
       )}
-
-      <DepartmentCreate open={open} closeModal={handleClose} />
+      <DepartmentCreate
+        open={open}
+        closeModal={handleClose}
+        clickedUpdate={clickedUpdate}
+      />
       {allDepartmentsStatus === APIStatus.PENDING &&
       departments.length === 0 ? (
         <CircularProgress />
@@ -119,7 +129,17 @@ const DepartmentList = () => {
                         Delete
                       </Button>
 
-                      <Button variant="contained" color="success">
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => {
+                          setClickedUpdate({
+                            id: dept.departmentId ?? 0,
+                            name: dept.departmentName ?? "",
+                          });
+                          setOpen(true);
+                        }}
+                      >
                         Update
                       </Button>
                     </Stack>

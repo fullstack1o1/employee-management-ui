@@ -2,8 +2,8 @@ import { Label } from "@mui/icons-material";
 import { Box, Button, FormControl, Modal } from "@mui/material";
 import { Input } from "@mui/material";
 import { useAppDispatch } from "../store/hook";
-import { createDepartment } from "../store/department.slice";
-import { useState } from "react";
+import { createDepartment, updateDepartment } from "../store/department.slice";
+import { useEffect, useState } from "react";
 
 const style = {
   position: "absolute",
@@ -21,20 +21,35 @@ const style = {
 type DepartmentCreateProps = {
   open: boolean;
   closeModal: () => void;
+  clickedUpdate?: { id: number; name: string } | null;
 };
 
 const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
   open,
   closeModal,
+  clickedUpdate,
 }) => {
   const dispatch = useAppDispatch();
-
   const [deptName, setDeptName] = useState("");
+
+  useEffect(() => {
+    setDeptName(clickedUpdate?.name || "");
+  }, [clickedUpdate, open]);
 
   const handleClick = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(createDepartment({ data: { departmentName: deptName } }));
-    console.log(deptName);
+    if (clickedUpdate) {
+      dispatch(
+        updateDepartment({
+          id: clickedUpdate.id,
+          data: { departmentName: deptName },
+        })
+      );
+    } else {
+      dispatch(createDepartment({ data: { departmentName: deptName } }));
+    }
+    //dispatch(fetchDepartments());
+    setDeptName("");
     closeModal();
   };
 
@@ -53,6 +68,7 @@ const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
               startAdornment={<Label />}
               inputProps={{ "aria-label": "Department name" }}
               onChange={(e) => setDeptName(e.target.value)}
+              value={deptName}
             />
             <Button
               variant="contained"
@@ -60,7 +76,7 @@ const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
               onClick={handleClick}
               sx={{ mt: 2 }}
             >
-              Create
+              {clickedUpdate ? "Update Department" : "Create Department"}
             </Button>
           </FormControl>
         </Box>
