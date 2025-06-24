@@ -3,6 +3,7 @@ import HomePage from "./page/HomePage.page";
 
 import Layout from "./components/LayOut.component";
 import DepartmentList from "./page/DepartmentList.page";
+import JobList from "./page/JobList.page";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="departments" element={<DepartmentList />} />
+          <Route path="jobs" element={<JobList />} />
         </Route>
       </Routes>
     </BrowserRouter>

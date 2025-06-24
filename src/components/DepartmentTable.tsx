@@ -1,0 +1,85 @@
+import {
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Stack,
+  Button,
+} from "@mui/material";
+import type { DepartmentResponse } from "../myApi";
+
+type DepartmentTableProps = {
+  departments: DepartmentResponse[];
+  onDelete: (id: number) => void;
+  onUpdate: (id: number, name: string) => void;
+};
+
+const DepartmentTable: React.FC<DepartmentTableProps> = ({
+  departments,
+  onDelete,
+  onUpdate,
+}) => {
+  return (
+    <TableContainer component={Paper}>
+      <Table aria-label="simple table" className="deptlist-table">
+        <TableHead>
+          <TableRow>
+            <TableCell align="inherit">Department ID</TableCell>
+            <TableCell align="inherit">Department name</TableCell>
+            <TableCell align="inherit">Action</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {departments.map((dept) => (
+            <TableRow
+              key={dept.departmentId}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell component="th" scope="row" align="inherit">
+                {dept.departmentId}
+              </TableCell>
+              <TableCell component="th" scope="row" align="inherit">
+                {dept.departmentName}
+              </TableCell>
+              <TableCell
+                component="th"
+                scope="row"
+                align="right"
+                sx={{ padding: "normal" }}
+              >
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => {
+                      if (dept.departmentId !== undefined)
+                        onDelete(dept.departmentId);
+                    }}
+                  >
+                    Delete
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={() => {
+                      if (dept.departmentId !== undefined)
+                        onUpdate(dept.departmentId, dept.departmentName ?? "");
+                    }}
+                  >
+                    Update
+                  </Button>
+                </Stack>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+};
+
+export default DepartmentTable;

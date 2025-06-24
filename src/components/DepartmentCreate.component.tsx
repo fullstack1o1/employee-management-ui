@@ -48,7 +48,6 @@ const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
     } else {
       dispatch(createDepartment({ data: { departmentName: deptName } }));
     }
-    //dispatch(fetchDepartments());
     setDeptName("");
     closeModal();
   };

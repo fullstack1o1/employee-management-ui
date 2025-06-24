@@ -5,20 +5,10 @@ import {
   deleteDepartment,
   fetchDepartments,
 } from "../store/department.slice";
-import {
-  Button,
-  CircularProgress,
-  Paper,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import "./departmentList.css";
 import DepartmentCreate from "../components/DepartmentCreate.component";
+import DepartmentTable from "../components/DepartmentTable";
 
 const DepartmentList = () => {
   const dispatch = useAppDispatch();
@@ -68,68 +58,18 @@ const DepartmentList = () => {
       />
       {allDepartmentsStatus === APIStatus.PENDING &&
       allDepartments.length === 0 ? (
-        <CircularProgress />
+        <div className="circular-progress">
+          <CircularProgress />
+        </div>
       ) : (
-        <TableContainer component={Paper}>
-          <Table aria-label="simple table" className="deptlist-table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="inherit">Department ID</TableCell>
-                <TableCell align="inherit">Department name</TableCell>
-                <TableCell align="inherit">Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {allDepartments.map((dept) => (
-                <TableRow
-                  key={dept.departmentId}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row" align="inherit">
-                    {dept.departmentId}
-                  </TableCell>
-                  <TableCell component="th" scope="row" align="inherit">
-                    {dept.departmentName}
-                  </TableCell>
-                  <TableCell
-                    component="th"
-                    scope="row"
-                    align="right"
-                    sx={{ padding: "normal" }}
-                  >
-                    <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => {
-                          if (dept.departmentId) {
-                            handleDeleteClick(dept.departmentId);
-                          }
-                        }}
-                      >
-                        Delete
-                      </Button>
-
-                      <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => {
-                          setClickedUpdate({
-                            id: dept.departmentId ?? 0,
-                            name: dept.departmentName ?? "",
-                          });
-                          setOpen(true);
-                        }}
-                      >
-                        Update
-                      </Button>
-                    </Stack>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <DepartmentTable
+          departments={allDepartments}
+          onDelete={handleDeleteClick}
+          onUpdate={(id, name) => {
+            setClickedUpdate({ id, name });
+            setOpen(true);
+          }}
+        />
       )}
     </div>
   );

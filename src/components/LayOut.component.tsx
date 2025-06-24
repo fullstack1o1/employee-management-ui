@@ -2,6 +2,7 @@ import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import BusinessIcon from "@mui/icons-material/Business";
+import WorkIcon from "@mui/icons-material/Work";
 import "./layout.css";
 
 const Layout = () => {
@@ -12,6 +13,7 @@ const Layout = () => {
   const navItems = [
     { text: "Home", icon: <HomeIcon />, path: "/" },
     { text: "Departments", icon: <BusinessIcon />, path: "/departments" },
+    { text: "Jobs", icon: <WorkIcon />, path: "/jobs" },
   ];
 
   return (
