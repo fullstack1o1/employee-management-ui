@@ -19,6 +19,23 @@ const DepartmentList = () => {
   const allDepartmentsStatus = useAppSelector(
     (state) => state.departmentSlice.departments.status
   );
+
+  const deleteDepartmentStatus = useAppSelector(
+    (state) => state.departmentSlice.departmentDelete.status
+  );
+  const updateDepartmentStatus = useAppSelector(
+    (state) => state.departmentSlice.departmentUpdate.status
+  );
+  useEffect(() => {
+    if (
+      deleteDepartmentStatus === APIStatus.FULLFILLED ||
+      updateDepartmentStatus === APIStatus.FULLFILLED
+    ) {
+      setActiveAction(null);
+      setActiveDepartmentId(null);
+    }
+  }, [deleteDepartmentStatus, updateDepartmentStatus]);
+
   //modal function
   const [open, setOpen] = useState(false);
   //state for keeping track of the department to be updated
@@ -26,7 +43,13 @@ const DepartmentList = () => {
     id: number;
     name: string;
   } | null>(null);
-  console.log("allDepartments", allDepartments);
+
+  const [activeDepartmentId, setActiveDepartmentId] = useState<number | null>(
+    null
+  );
+  const [activeAction, setActiveAction] = useState<"update" | "delete" | null>(
+    null
+  );
 
   const handleOpen = () => {
     setOpen(true);
@@ -42,7 +65,15 @@ const DepartmentList = () => {
   }, []);
 
   const handleDeleteClick = (id: number) => {
+    setActiveDepartmentId(id);
+    setActiveAction("delete");
     dispatch(deleteDepartment({ id }));
+  };
+  const handleUpdateClick = (id: number, name: string) => {
+    setActiveDepartmentId(id);
+    setActiveAction("update");
+    setClickedUpdate({ id, name });
+    setOpen(true);
   };
 
   return (
@@ -65,10 +96,9 @@ const DepartmentList = () => {
         <DepartmentTable
           departments={allDepartments}
           onDelete={handleDeleteClick}
-          onUpdate={(id, name) => {
-            setClickedUpdate({ id, name });
-            setOpen(true);
-          }}
+          onUpdate={handleUpdateClick}
+          activeDepartmentId={activeDepartmentId}
+          activeAction={activeAction}
         />
       )}
     </div>

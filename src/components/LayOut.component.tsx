@@ -18,7 +18,7 @@ const Layout = () => {
 
   return (
     <Box className="layout-container">
-      <AppBar position="static" className="appbar">
+      <AppBar position="sticky" className="appbar">
         <Toolbar>
           <Typography
             className="nav-typo"

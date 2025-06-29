@@ -9,8 +9,6 @@ import { APIStatus } from "../store/department.slice";
 import {
   Button,
   Stack,
-  Card,
-  CardContent,
   Typography,
   Box,
   CircularProgress,
@@ -47,44 +45,41 @@ const JobList = () => {
 
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
-      <Card elevation={3}>
-        <CardContent>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={2}
-          >
-            <Typography variant="h5" component="div">
-              Job Titles
-            </Typography>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => setOpen(true)}
-              disabled={jobTitleListStatus === APIStatus.PENDING}
-            >
-              Create Job
-            </Button>
-          </Stack>
-          {jobTitleListStatus === APIStatus.PENDING ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              minHeight={120}
-            >
-              <CircularProgress />
-            </Box>
-          ) : jobTitleList.length > 0 ? (
-            <JobTitleList jobs={jobTitleList} onDelete={handleDeleteJob} />
-          ) : (
-            <Typography variant="body2" color="text.secondary">
-              No job titles available.
-            </Typography>
-          )}
-        </CardContent>
-      </Card>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Typography variant="h5" component="div">
+          Job Titles
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setOpen(true)}
+          disabled={jobTitleListStatus === APIStatus.PENDING}
+        >
+          Create Job
+        </Button>
+      </Stack>
+      {jobTitleListStatus === APIStatus.PENDING ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight={120}
+        >
+          <CircularProgress />
+        </Box>
+      ) : jobTitleList.length > 0 ? (
+        <JobTitleList jobs={jobTitleList} onDelete={handleDeleteJob} />
+      ) : (
+        <Typography variant="body2" color="text.secondary">
+          No job titles available.
+        </Typography>
+      )}
+
       <JobCreate
         open={open}
         onClose={() => setOpen(false)}
