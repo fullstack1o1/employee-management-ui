@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import type { DepartmentResponse } from "../myApi";
 
-type DepartmentTableProps = {
+type DepartmentListProps = {
   departments: DepartmentResponse[];
   onDelete: (id: number) => void;
   onUpdate: (id: number, name: string) => void;
@@ -20,7 +20,7 @@ type DepartmentTableProps = {
   activeAction?: "update" | "delete" | null;
 };
 
-const DepartmentTable: React.FC<DepartmentTableProps> = ({
+const DepartmentList: React.FC<DepartmentListProps> = ({
   departments,
   onDelete,
   onUpdate,
@@ -119,4 +119,4 @@ const DepartmentTable: React.FC<DepartmentTableProps> = ({
   );
 };
 
-export default DepartmentTable;
+export default DepartmentList;

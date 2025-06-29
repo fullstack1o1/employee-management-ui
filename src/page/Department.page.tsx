@@ -8,9 +8,9 @@ import {
 import { Button, CircularProgress } from "@mui/material";
 import "./departmentList.css";
 import DepartmentCreate from "../components/DepartmentCreate.component";
-import DepartmentTable from "../components/DepartmentTable";
+import DepartmentList from "../components/DepartmentList";
 
-const DepartmentList = () => {
+const Department = () => {
   const dispatch = useAppDispatch();
 
   const allDepartments = useAppSelector(
@@ -93,7 +93,7 @@ const DepartmentList = () => {
           <CircularProgress />
         </div>
       ) : (
-        <DepartmentTable
+        <DepartmentList
           departments={allDepartments}
           onDelete={handleDeleteClick}
           onUpdate={handleUpdateClick}
@@ -104,4 +104,4 @@ const DepartmentList = () => {
     </div>
   );
 };
-export default DepartmentList;
+export default Department;

@@ -2,8 +2,8 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./page/HomePage.page";
 
 import Layout from "./components/LayOut.component";
-import DepartmentList from "./page/DepartmentList.page";
-import JobList from "./page/JobList.page";
+import Department from "./page/Department.page";
+import Job from "./page/Job.page";
 
 function App() {
   return (
@@ -11,8 +11,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
-          <Route path="departments" element={<DepartmentList />} />
-          <Route path="jobs" element={<JobList />} />
+          <Route path="departments" element={<Department />} />
+          <Route path="jobs" element={<Job />} />
         </Route>
       </Routes>
     </BrowserRouter>
