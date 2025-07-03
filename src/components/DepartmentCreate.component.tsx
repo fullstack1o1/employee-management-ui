@@ -1,6 +1,4 @@
-import { Label } from "@mui/icons-material";
-import { Box, Button, FormControl, Modal } from "@mui/material";
-import { Input } from "@mui/material";
+import { Box, Button, Modal, TextField } from "@mui/material";
 import { useAppDispatch } from "../store/hook";
 import { createDepartment, updateDepartment } from "../store/department.slice";
 import { useEffect, useState } from "react";
@@ -36,7 +34,7 @@ const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
     setDeptName(clickedUpdate?.name || "");
   }, [clickedUpdate, open]);
 
-  const handleClick = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (clickedUpdate) {
       dispatch(
@@ -60,24 +58,24 @@ const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <FormControl fullWidth>
-            <Input
-              placeholder="Department name"
-              startAdornment={<Label />}
-              inputProps={{ "aria-label": "Department name" }}
-              onChange={(e) => setDeptName(e.target.value)}
-              value={deptName}
-            />
+        <Box sx={style} component="form" onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            placeholder="Department name"
+            onChange={(e) => setDeptName(e.target.value)}
+            value={deptName}
+          />
+
+          <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>
             <Button
+              type="submit"
               variant="contained"
-              color="primary"
-              onClick={handleClick}
-              sx={{ mt: 2 }}
+              fullWidth
+              disabled={!deptName}
             >
-              {clickedUpdate ? "Update Department" : "Create Department"}
+              {clickedUpdate ? "Update Departmnt" : "Create Department"}
             </Button>
-          </FormControl>
+          </Box>
         </Box>
       </Modal>
     </div>

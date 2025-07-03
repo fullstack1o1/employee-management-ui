@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hook";
 import {
-  createJobTitle,
+  // createJobTitle,
   deleteJobTitle,
   fetchJobTitles,
 } from "../store/job.slice";
@@ -18,7 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import JobCreate from "../components/JobCreate.component";
 import JobTitleList from "../components/JobTitleList.component";
 
-const JobList = () => {
+const Job = () => {
   const dispatch = useAppDispatch();
   const jobTitleListStatus = useAppSelector(
     (state) => state.jobSlice.jobTitles.status
@@ -26,6 +26,26 @@ const JobList = () => {
   const jobTitleList = useAppSelector((state) => state.jobSlice.jobTitles.data);
 
   const [open, setOpen] = useState(false);
+  const [clickedUpdate, setClickedUpdate] = useState<{
+    id: number;
+    title: string;
+    minSalary: number;
+    maxSalary: number;
+  } | null>(null);
+  const [activeJobId, setActiveJobId] = useState<number | null>(null);
+  const [activeAction, setActiveAction] = useState<"update" | "delete" | null>(
+    null
+  );
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setClickedUpdate(null);
+    setActiveJobId(null);
+    setActiveAction(null);
+  };
 
   useEffect(() => {
     dispatch(fetchJobTitles());
@@ -33,14 +53,20 @@ const JobList = () => {
 
   const handleDeleteJob = (jobId: number) => {
     dispatch(deleteJobTitle({ id: jobId }));
+    setActiveJobId(jobId);
+    setActiveAction("delete");
   };
 
-  const handleCreateJob = (job: {
-    title: string;
-    minSalary: number;
-    maxSalary: number;
-  }) => {
-    dispatch(createJobTitle({ data: job }));
+  const handleUpdateClick = (
+    id: number,
+    title: string,
+    minSalary: number,
+    maxSalary: number
+  ) => {
+    setActiveJobId(id);
+    setActiveAction("update");
+    setClickedUpdate({ id, title, minSalary, maxSalary });
+    setOpen(true);
   };
 
   return (
@@ -57,13 +83,19 @@ const JobList = () => {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => setOpen(true)}
-          disabled={jobTitleListStatus === APIStatus.PENDING}
+          onClick={handleOpen}
         >
           Create Job
         </Button>
       </Stack>
-      {jobTitleListStatus === APIStatus.PENDING ? (
+
+      <JobCreate
+        open={open}
+        closeModal={handleClose}
+        clickedUpdate={clickedUpdate}
+      />
+
+      {jobTitleListStatus === APIStatus.PENDING && jobTitleList.length === 0 ? (
         <Box
           display="flex"
           justifyContent="center"
@@ -72,21 +104,17 @@ const JobList = () => {
         >
           <CircularProgress />
         </Box>
-      ) : jobTitleList.length > 0 ? (
-        <JobTitleList jobs={jobTitleList} onDelete={handleDeleteJob} />
       ) : (
-        <Typography variant="body2" color="text.secondary">
-          No job titles available.
-        </Typography>
+        <JobTitleList
+          jobs={jobTitleList}
+          onDelete={handleDeleteJob}
+          onUpdate={handleUpdateClick}
+          activeJobId={activeJobId}
+          activeAction={activeAction}
+        />
       )}
-
-      <JobCreate
-        open={open}
-        onClose={() => setOpen(false)}
-        onSubmit={handleCreateJob}
-      />
     </Box>
   );
 };
 
-export default JobList;
+export default Job;

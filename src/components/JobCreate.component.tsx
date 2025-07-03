@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Box, TextField, Button, Typography } from "@mui/material";
+import { useAppDispatch } from "../store/hook";
+import { createJobTitle, updateJobTitle } from "../store/job.slice";
 
 const style = {
   position: "absolute" as const,
@@ -13,44 +15,70 @@ const style = {
   p: 4,
 };
 
-interface JobCreateModalProps {
+type JobCreateModalProps = {
   open: boolean;
-  onClose: () => void;
-  onSubmit: (job: {
+  closeModal: () => void;
+  clickedUpdate: {
+    id: number;
     title: string;
     minSalary: number;
     maxSalary: number;
-  }) => void;
-}
+  } | null;
+};
 
 const JobCreate: React.FC<JobCreateModalProps> = ({
   open,
-  onClose,
-  onSubmit,
+  closeModal,
+  clickedUpdate,
 }) => {
   const [title, setTitle] = useState("");
   const [minSalary, setMinSalary] = useState<number | "">("");
   const [maxSalary, setMaxSalary] = useState<number | "">("");
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    setTitle(clickedUpdate?.title || "");
+    setMinSalary(clickedUpdate?.minSalary || "");
+    setMaxSalary(clickedUpdate?.maxSalary || "");
+  }, [clickedUpdate, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || minSalary === "" || maxSalary === "") return;
-    onSubmit({
-      title,
-      minSalary: Number(minSalary),
-      maxSalary: Number(maxSalary),
-    });
+    if (clickedUpdate) {
+      dispatch(
+        updateJobTitle({
+          id: clickedUpdate.id,
+          data: {
+            title: title,
+            minSalary: Number(minSalary),
+            maxSalary: Number(maxSalary),
+          },
+        })
+      );
+      console.log(clickedUpdate.id, title, minSalary, maxSalary);
+    } else {
+      dispatch(
+        createJobTitle({
+          data: {
+            title: title,
+            minSalary: Number(minSalary),
+            maxSalary: Number(maxSalary),
+          },
+        })
+      );
+    }
+
     setTitle("");
     setMinSalary("");
     setMaxSalary("");
-    onClose();
+    closeModal();
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={closeModal}>
       <Box sx={style} component="form" onSubmit={handleSubmit}>
         <Typography variant="h6" mb={2}>
-          Create Job
+          {clickedUpdate ? "Update Job" : "Create Job"}
         </Typography>
         <TextField
           label="Job Title"
@@ -86,9 +114,9 @@ const JobCreate: React.FC<JobCreateModalProps> = ({
           <Button
             type="submit"
             variant="contained"
-            disabled={!title || minSalary === "" || maxSalary === ""}
+            disabled={title === "" || minSalary === "" || maxSalary === ""}
           >
-            Create Job title
+            {clickedUpdate ? "Update Job" : "Create Job"}
           </Button>
         </Box>
       </Box>

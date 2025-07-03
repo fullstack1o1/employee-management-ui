@@ -5,8 +5,15 @@ import {
   deleteDepartment,
   fetchDepartments,
 } from "../store/department.slice";
-import { Button, CircularProgress } from "@mui/material";
-import "./departmentList.css";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import "./department.css";
 import DepartmentCreate from "../components/DepartmentCreate.component";
 import DepartmentList from "../components/DepartmentList";
 
@@ -58,6 +65,8 @@ const Department = () => {
   const handleClose = () => {
     setClickedUpdate(null);
     setOpen(false);
+    setActiveDepartmentId(null);
+    setActiveAction(null);
   };
 
   useEffect(() => {
@@ -77,31 +86,52 @@ const Department = () => {
   };
 
   return (
-    <div className="deptList-container">
-      {/*display create department button only if the status is not pending*/}
-      {allDepartmentsStatus !== APIStatus.PENDING && (
-        <Button onClick={handleOpen}>Create department</Button>
-      )}
-      <DepartmentCreate
-        open={open}
-        closeModal={handleClose}
-        clickedUpdate={clickedUpdate}
-      />
-      {allDepartmentsStatus === APIStatus.PENDING &&
-      allDepartments.length === 0 ? (
-        <div className="circular-progress">
-          <CircularProgress />
-        </div>
-      ) : (
-        <DepartmentList
-          departments={allDepartments}
-          onDelete={handleDeleteClick}
-          onUpdate={handleUpdateClick}
-          activeDepartmentId={activeDepartmentId}
-          activeAction={activeAction}
+    <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
+      <div>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={2}
+        >
+          <Typography variant="h5" component="div">
+            Department List
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleOpen}
+          >
+            Create Department
+          </Button>
+        </Stack>
+
+        <DepartmentCreate
+          open={open}
+          closeModal={handleClose}
+          clickedUpdate={clickedUpdate}
         />
-      )}
-    </div>
+        {allDepartmentsStatus === APIStatus.PENDING &&
+        allDepartments.length === 0 ? (
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            minHeight={120}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <DepartmentList
+            departments={allDepartments}
+            onDelete={handleDeleteClick}
+            onUpdate={handleUpdateClick}
+            activeDepartmentId={activeDepartmentId}
+            activeAction={activeAction}
+          />
+        )}
+      </div>
+    </Box>
   );
 };
 export default Department;
