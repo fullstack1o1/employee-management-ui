@@ -28,10 +28,28 @@ const HomePage = () => {
     >
       <Card sx={{ maxWidth: 500, width: "100%", boxShadow: 4 }}>
         <CardContent>
-          <Typography variant="h3" align="center" gutterBottom color="primary">
+          <Typography
+            variant="h3"
+            align="center"
+            gutterBottom
+            color="primary"
+            sx={{
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" }, // smaller on xs
+              fontWeight: 600,
+            }}
+          >
             Employee Management
           </Typography>
-          <Typography variant="h6" align="center" color="text.secondary" mb={4}>
+          <Typography
+            variant="h6"
+            align="center"
+            color="text.secondary"
+            mb={4}
+            sx={{
+              fontSize: { xs: "1rem", sm: "1.25rem" }, // smaller on xs
+              fontWeight: 400,
+            }}
+          >
             Welcome! Manage your employees, departments, and jobs efficiently.
           </Typography>
           <Stack
@@ -42,28 +60,40 @@ const HomePage = () => {
             <Button
               variant="contained"
               color="primary"
-              size="large"
+              size={window.innerWidth < 600 ? "medium" : "large"}
+              fullWidth={window.innerWidth < 600}
               startIcon={<PeopleIcon />}
               onClick={() => navigate("/employees")}
               disabled={true}
+              sx={{
+                fontSize: { xs: "1rem", sm: "1.1rem" },
+              }}
             >
               Employees
             </Button>
             <Button
               variant="contained"
               color="secondary"
-              size="large"
+              size={window.innerWidth < 600 ? "medium" : "large"}
+              fullWidth={window.innerWidth < 600}
               startIcon={<BusinessIcon />}
               onClick={() => navigate("/departments")}
+              sx={{
+                fontSize: { xs: "1rem", sm: "1.1rem" },
+              }}
             >
               Departments
             </Button>
             <Button
               variant="contained"
               color="success"
-              size="large"
+              size={window.innerWidth < 600 ? "medium" : "large"}
+              fullWidth={window.innerWidth < 600}
               startIcon={<WorkIcon />}
               onClick={() => navigate("/jobs")}
+              sx={{
+                fontSize: { xs: "1rem", sm: "1.1rem" },
+              }}
             >
               Jobs
             </Button>

@@ -29,6 +29,7 @@ const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const [deptName, setDeptName] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setDeptName(clickedUpdate?.name || "");
@@ -36,6 +37,10 @@ const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (deptName.trim() === "") {
+      setError("Department name is required");
+      return;
+    }
     if (clickedUpdate) {
       dispatch(
         updateDepartment({
@@ -48,6 +53,10 @@ const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
     }
     setDeptName("");
     closeModal();
+  };
+  const deptNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDeptName(e.target.value);
+    if (e.target.value.trim() !== "") setError("");
   };
 
   return (
@@ -62,8 +71,10 @@ const DepartmentCreate: React.FC<DepartmentCreateProps> = ({
           <TextField
             fullWidth
             placeholder="Department name"
-            onChange={(e) => setDeptName(e.target.value)}
+            onChange={deptNameChange}
             value={deptName}
+            error={!!error.length}
+            helperText={error}
           />
 
           <Box mt={2} display="flex" justifyContent="flex-end" gap={1}>

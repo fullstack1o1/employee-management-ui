@@ -1,15 +1,14 @@
 import {
-  TableContainer,
-  Paper,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
   Stack,
-  Button,
   CircularProgress,
+  ListItem,
+  ListItemText,
+  List,
+  Typography,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import type { DepartmentResponse } from "../myApi";
 
 type DepartmentListProps = {
@@ -28,94 +27,88 @@ const DepartmentList: React.FC<DepartmentListProps> = ({
   activeAction,
 }) => {
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="simple table" className="deptlist-table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="inherit">Department ID</TableCell>
-            <TableCell align="inherit">Department name</TableCell>
-            <TableCell align="inherit">Action</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {departments.map((dept) => {
-            const isActive = dept.departmentId === activeDepartmentId;
-            return (
-              <TableRow
-                key={dept.departmentId}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+    <List>
+      {departments.map((dept) => {
+        const isActive = dept.departmentId === activeDepartmentId;
+        return (
+          <ListItem
+            key={dept.departmentId}
+            sx={{
+              borderRadius: 1,
+              mb: 1,
+              bgcolor: "grey.50",
+              boxShadow: 1,
+            }}
+            secondaryAction={
+              <Stack
+                direction={{ xs: "row", sm: "row" }}
+                spacing={1}
+                sx={{
+                  width: { xs: "100%", sm: "auto" },
+                  justifyContent: { xs: "flex-end", sm: "flex-end" },
+                  mt: { xs: 1, sm: 0 },
+                }}
               >
-                <TableCell component="th" scope="row" align="inherit">
-                  {isActive && activeAction === "delete" ? (
-                    <CircularProgress size={20} />
+                <IconButton
+                  edge="end"
+                  color="primary"
+                  size="small"
+                  disabled={isActive && activeAction === "delete"}
+                  sx={{
+                    flex: 1,
+                    minWidth: 0,
+                    minHeight: 44,
+                  }}
+                  onClick={() => {
+                    if (dept.departmentId !== undefined)
+                      onUpdate(dept.departmentId, dept.departmentName ?? "");
+                  }}
+                >
+                  {isActive && activeAction === "update" ? (
+                    <CircularProgress size={20} color="inherit" />
                   ) : (
-                    dept.departmentId
+                    <EditIcon />
                   )}
-                </TableCell>
-                <TableCell component="th" scope="row" align="inherit">
+                </IconButton>
+                <IconButton
+                  edge="end"
+                  color="error"
+                  size="small"
+                  disabled={isActive && activeAction === "update"}
+                  sx={{
+                    flex: 1,
+                    minWidth: 0,
+                    minHeight: 44,
+                  }}
+                  onClick={() => {
+                    if (dept.departmentId !== undefined)
+                      onDelete(dept.departmentId);
+                  }}
+                >
+                  {isActive && activeAction === "delete" ? (
+                    <CircularProgress size={20} color="inherit" />
+                  ) : (
+                    <DeleteIcon />
+                  )}
+                </IconButton>
+              </Stack>
+            }
+          >
+            <ListItemText
+              primary={
+                <Typography variant="body1">
                   {isActive && activeAction === "update" ? (
                     <CircularProgress size={20} />
                   ) : (
                     dept.departmentName
                   )}
-                </TableCell>
-                <TableCell
-                  component="th"
-                  scope="row"
-                  align="right"
-                  sx={{ padding: "normal" }}
-                >
-                  <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      disabled={
-                        activeDepartmentId === dept.departmentId &&
-                        activeAction === "update"
-                      }
-                      onClick={() => {
-                        if (dept.departmentId !== undefined)
-                          onDelete(dept.departmentId);
-                      }}
-                    >
-                      {activeDepartmentId === dept.departmentId &&
-                      activeAction === "delete" ? (
-                        <CircularProgress size={20} color="inherit" />
-                      ) : (
-                        "Delete"
-                      )}
-                    </Button>
-
-                    <Button
-                      variant="contained"
-                      color="success"
-                      disabled={
-                        activeDepartmentId === dept.departmentId &&
-                        activeAction === "delete"
-                      }
-                      onClick={() => {
-                        if (dept.departmentId !== undefined)
-                          onUpdate(
-                            dept.departmentId,
-                            dept.departmentName ?? ""
-                          );
-                      }}
-                    >
-                      {activeDepartmentId === dept.departmentId &&
-                      activeAction === "update" ? (
-                        <CircularProgress size={20} color="inherit" />
-                      ) : (
-                        "Update"
-                      )}
-                    </Button>
-                  </Stack>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                </Typography>
+              }
+            />
+          </ListItem>
+        );
+      })}
+    </List>
   );
 };
 

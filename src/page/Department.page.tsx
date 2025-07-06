@@ -86,51 +86,70 @@ const Department = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
-      <div>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={2}
+    <Box
+      sx={{
+        maxWidth: { xs: "100%", sm: 600 },
+        mx: "auto",
+        mt: { xs: 2, sm: 4 },
+        px: { xs: 1, sm: 0 },
+      }}
+    >
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        justifyContent="space-between"
+        alignItems={{ xs: "stretch", sm: "center" }}
+        mb={2}
+        spacing={2}
+      >
+        <Typography
+          variant="h5"
+          component="div"
+          sx={{
+            textAlign: { xs: "center", sm: "left" },
+            fontSize: { xs: "1.1rem", sm: "1.4rem" },
+          }}
         >
-          <Typography variant="h5" component="div">
-            Department List
-          </Typography>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={handleOpen}
-          >
-            Create Department
-          </Button>
-        </Stack>
+          Department List
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleOpen}
+          size="small"
+          sx={{
+            width: { xs: "100%", sm: "auto" },
+            fontSize: { xs: "0.9rem", sm: "1rem" },
+            py: { xs: 1, sm: 1.5 },
+          }}
+        >
+          Create Department
+        </Button>
+      </Stack>
 
-        <DepartmentCreate
-          open={open}
-          closeModal={handleClose}
-          clickedUpdate={clickedUpdate}
+      <DepartmentCreate
+        open={open}
+        closeModal={handleClose}
+        clickedUpdate={clickedUpdate}
+      />
+      {allDepartmentsStatus === APIStatus.PENDING &&
+      allDepartments.length === 0 ? (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          minHeight={120}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <DepartmentList
+          departments={allDepartments}
+          onDelete={handleDeleteClick}
+          onUpdate={handleUpdateClick}
+          activeDepartmentId={activeDepartmentId}
+          activeAction={activeAction}
         />
-        {allDepartmentsStatus === APIStatus.PENDING &&
-        allDepartments.length === 0 ? (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            minHeight={120}
-          >
-            <CircularProgress />
-          </Box>
-        ) : (
-          <DepartmentList
-            departments={allDepartments}
-            onDelete={handleDeleteClick}
-            onUpdate={handleUpdateClick}
-            activeDepartmentId={activeDepartmentId}
-            activeAction={activeAction}
-          />
-        )}
-      </div>
+      )}
     </Box>
   );
 };

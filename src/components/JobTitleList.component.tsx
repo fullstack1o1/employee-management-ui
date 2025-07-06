@@ -43,7 +43,7 @@ const JobTitleList: React.FC<JobTitleListProps> = ({
             boxShadow: 1,
           }}
           secondaryAction={
-            <Stack direction="row" spacing={1}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
               <IconButton
                 edge="end"
                 color="primary"

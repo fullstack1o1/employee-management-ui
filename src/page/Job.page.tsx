@@ -72,18 +72,32 @@ const Job = () => {
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
       <Stack
-        direction="row"
+        direction={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
-        alignItems="center"
+        alignItems={{ xs: "stretch", sm: "center" }}
         mb={2}
+        spacing={2}
       >
-        <Typography variant="h5" component="div">
+        <Typography
+          variant="h5"
+          component="div"
+          sx={{
+            textAlign: { xs: "center", sm: "left" },
+            fontSize: { xs: "1.1rem", sm: "1.4rem" },
+          }}
+        >
           Job Titles
         </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={handleOpen}
+          size="small"
+          sx={{
+            width: { xs: "100%", sm: "auto" },
+            fontSize: { xs: "0.9rem", sm: "1rem" },
+            py: { xs: 1, sm: 1.5 },
+          }}
         >
           Create Job
         </Button>
