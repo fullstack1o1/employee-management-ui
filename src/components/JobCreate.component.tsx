@@ -47,8 +47,6 @@ const JobCreate: React.FC<JobCreateModalProps> = ({
     minSalary: "",
     maxSalary: "",
   });
-  // const [minSalErr, setMinSalErr] = useState<string>("");
-  // const [titleErr, setTitleErr] = useState("");
 
   const [errors, setErrors] = useState<{ title: string; minSalary: string }>({
     title: "",

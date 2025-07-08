@@ -101,29 +101,33 @@ const Department = () => {
         mb={2}
         spacing={2}
       >
-        <Typography
-          variant="h5"
-          component="div"
-          sx={{
-            textAlign: { xs: "center", sm: "left" },
-            fontSize: { xs: "1.1rem", sm: "1.4rem" },
-          }}
-        >
-          Department List
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleOpen}
-          size="small"
-          sx={{
-            width: { xs: "100%", sm: "auto" },
-            fontSize: { xs: "0.9rem", sm: "1rem" },
-            py: { xs: 1, sm: 1.5 },
-          }}
-        >
-          Create Department
-        </Button>
+        {allDepartmentsStatus !== APIStatus.PENDING && (
+          <>
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{
+                textAlign: { xs: "center", sm: "left" },
+                fontSize: { xs: "1.1rem", sm: "1.4rem" },
+              }}
+            >
+              Department List
+            </Typography>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={handleOpen}
+              size="small"
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+                fontSize: { xs: "0.9rem", sm: "1rem" },
+                py: { xs: 1, sm: 1.5 },
+              }}
+            >
+              Create Department
+            </Button>
+          </>
+        )}
       </Stack>
 
       <DepartmentCreate

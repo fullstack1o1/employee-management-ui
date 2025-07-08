@@ -36,6 +36,9 @@ const Job = () => {
   const [activeAction, setActiveAction] = useState<"update" | "delete" | null>(
     null
   );
+  const jobLoadingStatus = useAppSelector(
+    (state) => state.jobSlice.jobTitles.status
+  );
 
   const handleOpen = () => {
     setOpen(true);
@@ -78,29 +81,33 @@ const Job = () => {
         mb={2}
         spacing={2}
       >
-        <Typography
-          variant="h5"
-          component="div"
-          sx={{
-            textAlign: { xs: "center", sm: "left" },
-            fontSize: { xs: "1.1rem", sm: "1.4rem" },
-          }}
-        >
-          Job Titles
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleOpen}
-          size="small"
-          sx={{
-            width: { xs: "100%", sm: "auto" },
-            fontSize: { xs: "0.9rem", sm: "1rem" },
-            py: { xs: 1, sm: 1.5 },
-          }}
-        >
-          Create Job
-        </Button>
+        {jobLoadingStatus !== APIStatus.PENDING && (
+          <>
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{
+                textAlign: { xs: "center", sm: "left" },
+                fontSize: { xs: "1.1rem", sm: "1.4rem" },
+              }}
+            >
+              Job Titles
+            </Typography>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={handleOpen}
+              size="small"
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+                fontSize: { xs: "0.9rem", sm: "1rem" },
+                py: { xs: 1, sm: 1.5 },
+              }}
+            >
+              Create Job
+            </Button>
+          </>
+        )}
       </Stack>
 
       <JobCreate
