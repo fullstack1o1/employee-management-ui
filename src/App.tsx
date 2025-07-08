@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./page/HomePage.page";
 
-import Layout from "./components/LayOut.component";
+import Layout from "./components/layout/LayOut.component";
 import Department from "./page/Department.page";
 import Job from "./page/Job.page";
 
