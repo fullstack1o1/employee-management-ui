@@ -1,0 +1,114 @@
+/* Employee List Component Styles */
+
+.emp-list-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+@media (min-width: 600px) {
+  .emp-list-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.emp-list-title {
+  margin-bottom: 16px;
+}
+
+.emp-list-item {
+  border-radius: 4px;
+  margin-bottom: 8px;
+  background-color: #fafafa;
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+  flex-direction: column;
+  align-items: stretch;
+  padding-right: 8px;
+}
+
+@media (min-width: 600px) {
+  .emp-list-item {
+    flex-direction: row;
+    align-items: center;
+    padding-right: 64px;
+  }
+}
+
+.emp-list-secondary-action {
+  position: static;
+  margin-top: 8px;
+  align-self: flex-end;
+}
+
+@media (min-width: 600px) {
+  .emp-list-secondary-action {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    margin-top: 0;
+    align-self: auto;
+  }
+}
+
+.emp-list-content-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .emp-list-content-box {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.emp-list-avatar {
+  min-width: auto;
+}
+
+@media (min-width: 600px) {
+  .emp-list-avatar {
+    min-width: 56px;
+  }
+}
+
+.emp-list-text {
+  flex: 1;
+  padding-right: 0;
+}
+
+@media (min-width: 600px) {
+  .emp-list-text {
+    padding-right: 16px;
+  }
+}
+
+.emp-list-secondary-text {
+  margin-top: 4px;
+}
+
+.emp-list-info-text {
+  word-break: break-word;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 600px) {
+  .emp-list-info-text {
+    font-size: 0.875rem;
+  }
+}
+
+.emp-list-icon-button {
+  color: #1976d2;
+}
+
+.emp-list-icon-button:hover {
+  background-color: rgba(25, 118, 210, 0.04);
+}

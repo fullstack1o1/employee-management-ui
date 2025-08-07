@@ -64,7 +64,6 @@ const HomePage = () => {
               fullWidth={window.innerWidth < 600}
               startIcon={<PeopleIcon />}
               onClick={() => navigate("/employees")}
-              disabled={true}
               sx={{
                 fontSize: { xs: "1rem", sm: "1.1rem" },
               }}

@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 
 import { departmentSlice } from "./department.slice";
 import { jobSlice } from "./job.slice";
+import { employeeSlice } from "./employee.slice";
 
 export const store = configureStore({
   reducer: {
     departmentSlice: departmentSlice.reducer,
     jobSlice: jobSlice.reducer,
+    employeeSlice: employeeSlice.reducer,
   },
 });
 
