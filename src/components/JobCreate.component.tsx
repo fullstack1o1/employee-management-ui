@@ -76,7 +76,7 @@ const JobCreate: React.FC<JobCreateModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (job.title.trim() === "") {
-      setErrors((prev) => ({ ...prev, title: "ob title is required" }));
+      setErrors((prev) => ({ ...prev, title: "Job title is required" }));
       return;
     }
     if (Number(job.minSalary) < 0) {

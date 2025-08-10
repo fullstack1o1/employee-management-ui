@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Api, type EmployeeResponse } from "../myApi";
+import { Api, type EmployeeRequest, type EmployeeResponse } from "../myApi";
 import { APIStatus, type IApiResponse } from "./department.slice";
 
 interface IState {
   employees: IApiResponse<EmployeeResponse[]>;
+  createEmployee: IApiResponse<EmployeeResponse>;
 }
 
 const api = new Api({
@@ -17,6 +18,7 @@ const initialState: IState = {
   //   deleteJob: { data: undefined, status: APIStatus.IDLE },
   //   updateJob: { data: {} as JobTitleResponse, status: APIStatus.IDLE },
   employees: { data: [], status: APIStatus.IDLE },
+  createEmployee: { data: {}, status: APIStatus.IDLE },
 };
 // fetch all employee list
 export const fetchEmployees = createAsyncThunk(
@@ -27,12 +29,21 @@ export const fetchEmployees = createAsyncThunk(
     return res.data;
   }
 );
+export const createEmployee = createAsyncThunk<
+  EmployeeResponse,
+  EmployeeRequest
+>("employee/createEmployee", async (employeeData: EmployeeRequest) => {
+  const res = await api.employee.employeeCreate(employeeData);
+  console.log(res.data);
+  return res.data;
+});
 
 export const employeeSlice = createSlice({
   name: "emp",
   initialState,
   reducers: {},
   extraReducers(builder) {
+    //fetch employees
     builder
 
       .addCase(fetchEmployees.pending, (state) => {
@@ -45,12 +56,25 @@ export const employeeSlice = createSlice({
       .addCase(fetchEmployees.fulfilled, (state, action) => {
         state.employees.status = APIStatus.FULLFILLED;
         state.employees.data = action.payload;
+      })
+      //create employee
+      .addCase(createEmployee.pending, (state) => {
+        state.createEmployee.status = APIStatus.PENDING;
+      })
+      .addCase(createEmployee.rejected, (state) => {
+        state.createEmployee.status = APIStatus.FAILED;
+        state.createEmployee.error = "Some Error Occured";
+      })
+      .addCase(createEmployee.fulfilled, (state, action) => {
+        state.createEmployee.status = APIStatus.FULLFILLED;
+        state.createEmployee.data = action.payload;
       });
   },
 });
 
 employeeSlice.actions = {
   fetchEmployees,
+  createEmployee,
 };
 
 export default employeeSlice.reducer;

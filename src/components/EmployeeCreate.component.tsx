@@ -6,8 +6,20 @@ import {
   Button,
   Typography,
   Stack,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
-// import { createEmployee, updateEmployee } from "../store/employee.slice";
+import { createEmployee, fetchEmployees } from "../store/employee.slice";
+import { fetchJobTitles } from "../store/job.slice";
+import { fetchDepartments } from "../store/department.slice";
+import { useAppDispatch, useAppSelector } from "../store/hook";
+import type {
+  EmployeeResponse,
+  JobTitleResponse,
+  DepartmentResponse,
+} from "../myApi";
 
 const style = {
   position: "absolute" as const,
@@ -45,6 +57,20 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
   closeModal,
   clickedUpdate,
 }) => {
+  const dispatch = useAppDispatch();
+
+  // Get data from Redux store
+  const { employees } = useAppSelector((state) => state.employeeSlice);
+  const { jobTitles } = useAppSelector((state) => state.jobSlice);
+  const { departments } = useAppSelector((state) => state.departmentSlice);
+
+  // Fetch data when component mounts
+  useEffect(() => {
+    dispatch(fetchEmployees());
+    dispatch(fetchJobTitles());
+    dispatch(fetchDepartments());
+  }, [dispatch]);
+
   const [employee, setEmployee] = useState({
     firstName: "",
     lastName: "",
@@ -57,72 +83,26 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
     departmentId: "" as string | number,
   });
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
   useEffect(() => {
-    if (clickedUpdate) {
-      setEmployee({
-        firstName: clickedUpdate.firstName,
-        lastName: clickedUpdate.lastName,
-        email: clickedUpdate.email,
-        phoneNumber: clickedUpdate.phoneNumber,
-        hireDate: clickedUpdate.hireDate,
-        salary: clickedUpdate.salary,
-        managerId: clickedUpdate.managerId,
-        jobId: clickedUpdate.jobId,
-        departmentId: clickedUpdate.departmentId,
-      });
-    } else {
-      setEmployee({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phoneNumber: "",
-        hireDate: "",
-        salary: "",
-        managerId: "",
-        jobId: "",
-        departmentId: "",
-      });
-    }
-    setErrors({});
-  }, [clickedUpdate, open]);
+    setEmployee({
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      hireDate: "",
+      salary: "",
+      managerId: "",
+      jobId: "",
+      departmentId: "",
+    });
+  }, [open]);
 
   const handleInputChange = (field: string, value: string | number) => {
     setEmployee((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: "" }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-
-    if (!employee.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    }
-    if (!employee.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
-    }
-    if (!employee.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(employee.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    if (!employee.hireDate) {
-      newErrors.hireDate = "Hire date is required";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
 
     const employeeData = {
       firstName: employee.firstName,
@@ -137,13 +117,7 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
         ? Number(employee.departmentId)
         : undefined,
     };
-
-    if (clickedUpdate) {
-      console.log("Update employee:", employeeData);
-    } else {
-      console.log("Create employee:", employeeData);
-    }
-
+    dispatch(createEmployee(employeeData));
     closeModal();
   };
 
@@ -159,7 +133,6 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
       jobId: "",
       departmentId: "",
     });
-    setErrors({});
     closeModal();
   };
 
@@ -178,8 +151,6 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                 label="First Name"
                 value={employee.firstName}
                 onChange={(e) => handleInputChange("firstName", e.target.value)}
-                error={!!errors.firstName}
-                helperText={errors.firstName}
                 required
               />
               <TextField
@@ -187,8 +158,6 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                 label="Last Name"
                 value={employee.lastName}
                 onChange={(e) => handleInputChange("lastName", e.target.value)}
-                error={!!errors.lastName}
-                helperText={errors.lastName}
                 required
               />
             </Box>
@@ -199,8 +168,6 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
               type="email"
               value={employee.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
-              error={!!errors.email}
-              helperText={errors.email}
               required
             />
 
@@ -219,10 +186,10 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                 type="date"
                 value={employee.hireDate}
                 onChange={(e) => handleInputChange("hireDate", e.target.value)}
-                error={!!errors.hireDate}
-                helperText={errors.hireDate}
-                InputLabelProps={{
-                  shrink: true,
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
                 }}
                 required
               />
@@ -235,36 +202,76 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                 type="number"
                 value={employee.salary}
                 onChange={(e) => handleInputChange("salary", e.target.value)}
-                InputProps={{
-                  startAdornment: <Typography>$</Typography>,
+                slotProps={{
+                  input: {
+                    startAdornment: <Typography>DKK</Typography>,
+                  },
                 }}
               />
-              <TextField
-                fullWidth
-                label="Manager ID"
-                type="number"
-                value={employee.managerId}
-                onChange={(e) => handleInputChange("managerId", e.target.value)}
-              />
+              <FormControl fullWidth>
+                <InputLabel>Manager</InputLabel>
+                <Select
+                  value={employee.managerId}
+                  label="Manager"
+                  onChange={(e) =>
+                    handleInputChange("managerId", e.target.value)
+                  }
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {employees.data &&
+                    employees.data.map((emp: EmployeeResponse) => (
+                      <MenuItem key={emp.employeeId} value={emp.employeeId}>
+                        {emp.firstName} {emp.lastName}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
             </Box>
 
             <Box sx={{ display: "flex", gap: 2 }}>
-              <TextField
-                fullWidth
-                label="Job ID"
-                type="number"
-                value={employee.jobId}
-                onChange={(e) => handleInputChange("jobId", e.target.value)}
-              />
-              <TextField
-                fullWidth
-                label="Department ID"
-                type="number"
-                value={employee.departmentId}
-                onChange={(e) =>
-                  handleInputChange("departmentId", e.target.value)
-                }
-              />
+              <FormControl fullWidth>
+                <InputLabel>Job Title</InputLabel>
+                <Select
+                  value={employee.jobId}
+                  label="Job Title"
+                  onChange={(e) => handleInputChange("jobId", e.target.value)}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {jobTitles.data &&
+                    jobTitles.data.map((job: JobTitleResponse) => (
+                      <MenuItem key={job.jobId} value={job.jobId}>
+                        {job.title}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                <InputLabel>Department</InputLabel>
+                <Select
+                  value={employee.departmentId}
+                  label="Department"
+                  onChange={(e) =>
+                    handleInputChange("departmentId", e.target.value)
+                  }
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  {departments.data &&
+                    departments.data.map((dept: DepartmentResponse) => (
+                      <MenuItem
+                        key={dept.departmentId}
+                        value={dept.departmentId}
+                      >
+                        {dept.departmentName}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
             </Box>
           </Stack>
 

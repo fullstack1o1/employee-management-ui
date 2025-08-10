@@ -21,18 +21,6 @@ const Employee = () => {
   );
 
   const [open, setOpen] = useState(false);
-  const [clickedUpdate, setClickedUpdate] = useState<{
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    hireDate: string;
-    salary: number;
-    managerId: number;
-    jobId: number;
-    departmentId: number;
-  } | null>(null);
 
   const handleOpen = () => {
     setOpen(true);
@@ -40,7 +28,6 @@ const Employee = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setClickedUpdate(null);
   };
 
   useEffect(() => {
@@ -48,39 +35,66 @@ const Employee = () => {
   }, [dispatch]);
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box
+      sx={{
+        maxWidth: { xs: "100%", sm: 600 },
+        mx: "auto",
+        mt: { xs: 2, sm: 4 },
+        px: { xs: 1, sm: 0 },
+      }}
+    >
       <Stack
-        direction="row"
+        direction={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
-        alignItems="center"
-        sx={{ mb: 3 }}
+        alignItems={{ xs: "stretch", sm: "center" }}
+        mb={2}
+        spacing={2}
       >
-        <Typography variant="h4" component="h1">
-          Employee Management
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleOpen}
-          sx={{ minWidth: 160 }}
-        >
-          Create Employee
-        </Button>
+        {empStatus !== APIStatus.PENDING && (
+          <>
+            <Typography
+              variant="h5"
+              component="div"
+              sx={{
+                textAlign: { xs: "center", sm: "left" },
+                fontSize: { xs: "1.1rem", sm: "1.4rem" },
+              }}
+            >
+              Employee List
+            </Typography>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={handleOpen}
+              size="small"
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+                fontSize: { xs: "0.9rem", sm: "1rem" },
+                py: { xs: 1, sm: 1.5 },
+              }}
+            >
+              Create Employee
+            </Button>
+          </>
+        )}
       </Stack>
 
-      {empStatus === APIStatus.PENDING ? (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+      <EmployeeCreate open={open} closeModal={handleClose} />
+
+      {empStatus === APIStatus.PENDING && empList.length === 0 ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: 200,
+          }}
+        >
           <CircularProgress />
         </Box>
       ) : (
         <EmpList empList={empList} />
       )}
-
-      <EmployeeCreate
-        open={open}
-        closeModal={handleClose}
-        clickedUpdate={clickedUpdate}
-      />
     </Box>
   );
 };
