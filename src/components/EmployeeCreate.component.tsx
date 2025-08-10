@@ -77,6 +77,7 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
     email: "",
     phoneNumber: "",
     hireDate: "",
+    startDate: "",
     salary: "" as string | number,
     managerId: "" as string | number,
     jobId: "" as string | number,
@@ -90,6 +91,7 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
       email: "",
       phoneNumber: "",
       hireDate: "",
+      startDate: "",
       salary: "",
       managerId: "",
       jobId: "",
@@ -110,6 +112,7 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
       email: employee.email,
       phoneNumber: employee.phoneNumber || undefined,
       hireDate: employee.hireDate,
+      startDate: employee.startDate || undefined,
       salary: employee.salary ? Number(employee.salary) : undefined,
       managerId: employee.managerId ? Number(employee.managerId) : undefined,
       jobId: employee.jobId ? Number(employee.jobId) : undefined,
@@ -128,6 +131,7 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
       email: "",
       phoneNumber: "",
       hireDate: "",
+      startDate: "",
       salary: "",
       managerId: "",
       jobId: "",
@@ -198,6 +202,18 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
             <Box sx={{ display: "flex", gap: 2 }}>
               <TextField
                 fullWidth
+                label="Start Date"
+                type="date"
+                value={employee.startDate}
+                onChange={(e) => handleInputChange("startDate", e.target.value)}
+                slotProps={{
+                  inputLabel: {
+                    shrink: true,
+                  },
+                }}
+              />
+              <TextField
+                fullWidth
                 label="Salary"
                 type="number"
                 value={employee.salary}
@@ -208,6 +224,9 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                   },
                 }}
               />
+            </Box>
+
+            <Box sx={{ display: "flex", gap: 2 }}>
               <FormControl fullWidth>
                 <InputLabel>Manager</InputLabel>
                 <Select

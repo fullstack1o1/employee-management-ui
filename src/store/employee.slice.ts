@@ -33,7 +33,7 @@ export const createEmployee = createAsyncThunk<
   EmployeeResponse,
   EmployeeRequest
 >("employee/createEmployee", async (employeeData: EmployeeRequest) => {
-  const res = await api.employee.employeeCreate(employeeData);
+  const res = await api.employee.multipartCreate(employeeData);
   console.log(res.data);
   return res.data;
 });
@@ -68,6 +68,7 @@ export const employeeSlice = createSlice({
       .addCase(createEmployee.fulfilled, (state, action) => {
         state.createEmployee.status = APIStatus.FULLFILLED;
         state.createEmployee.data = action.payload;
+        state.employees.data.push(action.payload); // Add new employee to the list
       });
   },
 });
