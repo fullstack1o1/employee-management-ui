@@ -26,11 +26,12 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 600,
+  width: { xs: "90%", sm: "80%", md: 600 },
+  maxWidth: 600,
   bgcolor: "background.paper",
   borderRadius: 2,
   boxShadow: 24,
-  p: 4,
+  p: { xs: 2, sm: 3, md: 4 },
   maxHeight: "90vh",
   overflow: "auto",
 };
@@ -149,7 +150,13 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
 
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
           <Stack spacing={2}>
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+              }}
+            >
               <TextField
                 fullWidth
                 label="First Name"
@@ -166,16 +173,21 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
               />
             </Box>
 
-            <TextField
-              fullWidth
-              label="Email"
-              type="email"
-              value={employee.email}
-              onChange={(e) => handleInputChange("email", e.target.value)}
-              required
-            />
-
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+              }}
+            >
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                value={employee.email}
+                onChange={(e) => handleInputChange("email", e.target.value)}
+                required
+              />
               <TextField
                 fullWidth
                 label="Phone Number"
@@ -184,6 +196,15 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                   handleInputChange("phoneNumber", e.target.value)
                 }
               />
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+              }}
+            >
               <TextField
                 fullWidth
                 label="Hire Date"
@@ -197,9 +218,6 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                 }}
                 required
               />
-            </Box>
-
-            <Box sx={{ display: "flex", gap: 2 }}>
               <TextField
                 fullWidth
                 label="Start Date"
@@ -212,6 +230,15 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                   },
                 }}
               />
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+              }}
+            >
               <TextField
                 fullWidth
                 label="Salary"
@@ -224,9 +251,6 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                   },
                 }}
               />
-            </Box>
-
-            <Box sx={{ display: "flex", gap: 2 }}>
               <FormControl fullWidth>
                 <InputLabel>Manager</InputLabel>
                 <Select
@@ -249,7 +273,13 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
               </FormControl>
             </Box>
 
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2,
+              }}
+            >
               <FormControl fullWidth>
                 <InputLabel>Job Title</InputLabel>
                 <Select
@@ -295,12 +325,30 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
           </Stack>
 
           <Box
-            sx={{ mt: 3, display: "flex", justifyContent: "flex-end", gap: 2 }}
+            sx={{
+              mt: 3,
+              display: "flex",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "flex-end",
+              gap: 2,
+            }}
           >
-            <Button onClick={handleClose} variant="outlined">
+            <Button
+              onClick={handleClose}
+              variant="outlined"
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+              }}
+            >
               Cancel
             </Button>
-            <Button type="submit" variant="contained">
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                width: { xs: "100%", sm: "auto" },
+              }}
+            >
               {clickedUpdate ? "Update" : "Create"}
             </Button>
           </Box>

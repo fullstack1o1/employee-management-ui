@@ -9,7 +9,7 @@ import {
   Avatar,
   ListItemAvatar,
 } from "@mui/material";
-import { Visibility, Person } from "@mui/icons-material";
+import { Visibility, Person, Delete } from "@mui/icons-material";
 import type { EmployeeResponse } from "../myApi";
 import { useNavigate } from "react-router-dom";
 import "./EmpList.css";
@@ -47,6 +47,14 @@ const EmpList: React.FC<EmpListProps> = ({ empList }) => {
                   className="emp-list-icon-button"
                 >
                   <Visibility />
+                </IconButton>
+                <IconButton
+                  aria-label="delete employee"
+                  size="small"
+                  color="error"
+                  className="emp-list-icon-button"
+                >
+                  <Delete />
                 </IconButton>
               </Stack>
             }

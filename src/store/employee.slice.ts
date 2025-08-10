@@ -68,7 +68,6 @@ export const employeeSlice = createSlice({
       .addCase(createEmployee.fulfilled, (state, action) => {
         state.createEmployee.status = APIStatus.FULLFILLED;
         state.createEmployee.data = action.payload;
-        state.employees.data.push(action.payload); // Add new employee to the list
       });
   },
 });
