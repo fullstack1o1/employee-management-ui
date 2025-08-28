@@ -85,6 +85,8 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
     departmentId: "" as string | number,
   });
 
+  const [salaryError, setSalaryError] = useState("");
+
   useEffect(() => {
     setEmployee({
       firstName: "",
@@ -98,14 +100,60 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
       jobId: "",
       departmentId: "",
     });
+    setSalaryError("");
   }, [open]);
+
+  // Get salary range for selected job
+  const getSalaryRange = () => {
+    if (!employee.jobId || !jobTitles.data) return null;
+    const job = jobTitles.data.find(
+      (j: JobTitleResponse) => j.jobId === Number(employee.jobId)
+    );
+    return job ? { min: job.minSalary, max: job.maxSalary } : null;
+  };
+
+  // Validate salary against job range
+  const validateSalary = (salary: string | number) => {
+    if (!salary || !employee.jobId) return "";
+
+    const range = getSalaryRange();
+    if (!range || range.min === undefined || range.max === undefined) return "";
+
+    const salaryNum = Number(salary);
+    if (salaryNum < range.min) {
+      return `Minimum salary: DKK ${range.min.toLocaleString()}`;
+    }
+    if (salaryNum > range.max) {
+      return `Maximum salary: DKK ${range.max.toLocaleString()}`;
+    }
+    return "";
+  };
 
   const handleInputChange = (field: string, value: string | number) => {
     setEmployee((prev) => ({ ...prev, [field]: value }));
+    // When job changes, clear salary and error
+    if (field === "jobId") {
+      setEmployee((prev) => ({ ...prev, salary: "" }));
+      setSalaryError("");
+    }
+
+    // Validate salary when it changes
+    if (field === "salary" && employee.jobId) {
+      setSalaryError(validateSalary(value));
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Final validation
+    if (employee.salary && employee.jobId) {
+      const error = validateSalary(employee.salary);
+      if (error) {
+        setSalaryError(error);
+        return;
+      }
+    }
 
     const employeeData = {
       firstName: employee.firstName,
@@ -138,7 +186,18 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
       jobId: "",
       departmentId: "",
     });
+    setSalaryError("");
     closeModal();
+  };
+
+  // Helper text for salary field
+  const getSalaryHelperText = () => {
+    if (!employee.jobId) return "Select a job title first";
+    if (salaryError) return salaryError;
+    const range = getSalaryRange();
+    return range && range.min !== undefined && range.max !== undefined
+      ? `Salary range: DKK ${range.min.toLocaleString()} - ${range.max.toLocaleString()}`
+      : "";
   };
 
   return (
@@ -245,6 +304,9 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                 type="number"
                 value={employee.salary}
                 onChange={(e) => handleInputChange("salary", e.target.value)}
+                disabled={!employee.jobId}
+                error={!!salaryError}
+                helperText={getSalaryHelperText()}
                 slotProps={{
                   input: {
                     startAdornment: <Typography>DKK</Typography>,
@@ -345,6 +407,7 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
             <Button
               type="submit"
               variant="contained"
+              disabled={!!salaryError}
               sx={{
                 width: { xs: "100%", sm: "auto" },
               }}

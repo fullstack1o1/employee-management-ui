@@ -13,8 +13,6 @@ const api = new Api({
 });
 
 const initialState: IState = {
-  //   jobTitles: { data: [], status: APIStatus.IDLE },
-  //   createJob: { data: {} as JobTitleResponse, status: APIStatus.IDLE },
   //   deleteJob: { data: undefined, status: APIStatus.IDLE },
   //   updateJob: { data: {} as JobTitleResponse, status: APIStatus.IDLE },
   employees: { data: [], status: APIStatus.IDLE },
