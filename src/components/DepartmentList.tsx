@@ -14,7 +14,7 @@ import type { DepartmentResponse } from "../myApi";
 type DepartmentListProps = {
   departments: DepartmentResponse[];
   onDelete: (id: number) => void;
-  onUpdate: (id: number, name: string) => void;
+  onEdit: (id: number) => void;
   activeDepartmentId?: number | null;
   activeAction?: "update" | "delete" | null;
 };
@@ -22,7 +22,7 @@ type DepartmentListProps = {
 const DepartmentList: React.FC<DepartmentListProps> = ({
   departments,
   onDelete,
-  onUpdate,
+  onEdit,
   activeDepartmentId,
   activeAction,
 }) => {
@@ -61,7 +61,7 @@ const DepartmentList: React.FC<DepartmentListProps> = ({
                   }}
                   onClick={() => {
                     if (dept.departmentId !== undefined)
-                      onUpdate(dept.departmentId, dept.departmentName ?? "");
+                      onEdit(dept.departmentId);
                   }}
                 >
                   {isActive && activeAction === "update" ? (

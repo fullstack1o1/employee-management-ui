@@ -11,7 +11,11 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
-import { createEmployee, fetchEmployees } from "../store/employee.slice";
+import {
+  createEmployee,
+  updateEmployee,
+  fetchEmployees,
+} from "../store/employee.slice";
 import { fetchJobTitles } from "../store/job.slice";
 import { fetchDepartments } from "../store/department.slice";
 import { useAppDispatch, useAppSelector } from "../store/hook";
@@ -88,20 +92,39 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
   const [salaryError, setSalaryError] = useState("");
 
   useEffect(() => {
-    setEmployee({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phoneNumber: "",
-      hireDate: "",
-      startDate: "",
-      salary: "",
-      managerId: "",
-      jobId: "",
-      departmentId: "",
-    });
-    setSalaryError("");
-  }, [open]);
+    if (open) {
+      if (clickedUpdate) {
+        // Edit mode - pre-fill with existing data
+        setEmployee({
+          firstName: clickedUpdate.firstName || "",
+          lastName: clickedUpdate.lastName || "",
+          email: clickedUpdate.email || "",
+          phoneNumber: clickedUpdate.phoneNumber || "",
+          hireDate: clickedUpdate.hireDate || "",
+          startDate: clickedUpdate.hireDate || "",
+          salary: clickedUpdate.salary || "",
+          managerId: clickedUpdate.managerId || "",
+          jobId: clickedUpdate.jobId || "",
+          departmentId: clickedUpdate.departmentId || "",
+        });
+      } else {
+        // Create mode - reset to empty
+        setEmployee({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phoneNumber: "",
+          hireDate: "",
+          startDate: "",
+          salary: "",
+          managerId: "",
+          jobId: "",
+          departmentId: "",
+        });
+      }
+      setSalaryError("");
+    }
+  }, [open, clickedUpdate]);
 
   // Get salary range for selected job
   const getSalaryRange = () => {
@@ -169,7 +192,15 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
         ? Number(employee.departmentId)
         : undefined,
     };
-    dispatch(createEmployee(employeeData));
+
+    if (clickedUpdate) {
+      // Update existing employee
+      dispatch(updateEmployee({ id: clickedUpdate.id, employeeData }));
+    } else {
+      // Create new employee
+      dispatch(createEmployee(employeeData));
+    }
+
     closeModal();
   };
 

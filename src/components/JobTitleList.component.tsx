@@ -13,12 +13,7 @@ import type { JobTitleResponse } from "../myApi";
 interface JobTitleListProps {
   jobs: JobTitleResponse[];
   onDelete: (jobId: number) => void;
-  onUpdate: (
-    id: number,
-    title: string,
-    minSalary: number,
-    maxSalary: number
-  ) => void;
+  onEdit: (jobId: number) => void;
   activeJobId?: number | null;
   activeAction?: "update" | "delete" | null;
 }
@@ -26,7 +21,7 @@ interface JobTitleListProps {
 const JobTitleList: React.FC<JobTitleListProps> = ({
   jobs,
   onDelete,
-  onUpdate,
+  onEdit,
   activeJobId,
   activeAction,
 }) => (
@@ -50,13 +45,7 @@ const JobTitleList: React.FC<JobTitleListProps> = ({
                 size="small"
                 disabled={isActive && activeAction === "delete"}
                 onClick={() => {
-                  if (job.jobId !== undefined)
-                    onUpdate(
-                      job.jobId,
-                      job.title ?? "",
-                      Number(job.minSalary),
-                      Number(job.maxSalary)
-                    );
+                  if (job.jobId !== undefined) onEdit(job.jobId);
                 }}
               >
                 <EditIcon />

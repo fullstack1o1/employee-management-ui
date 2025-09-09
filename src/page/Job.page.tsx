@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hook";
-import {
-  // createJobTitle,
-  deleteJobTitle,
-  fetchJobTitles,
-} from "../store/job.slice";
+import { deleteJobTitle, fetchJobTitles } from "../store/job.slice";
 import { APIStatus } from "../store/department.slice";
 import {
   Button,
@@ -26,7 +22,7 @@ const Job = () => {
   const jobTitleList = useAppSelector((state) => state.jobSlice.jobTitles.data);
 
   const [open, setOpen] = useState(false);
-  const [clickedUpdate, setClickedUpdate] = useState<{
+  const [selectedJob, setSelectedJob] = useState<{
     id: number;
     title: string;
     minSalary: number;
@@ -45,7 +41,7 @@ const Job = () => {
   };
   const handleClose = () => {
     setOpen(false);
-    setClickedUpdate(null);
+    setSelectedJob(null);
     setActiveJobId(null);
     setActiveAction(null);
   };
@@ -60,16 +56,19 @@ const Job = () => {
     setActiveAction("delete");
   };
 
-  const handleUpdateClick = (
-    id: number,
-    title: string,
-    minSalary: number,
-    maxSalary: number
-  ) => {
-    setActiveJobId(id);
-    setActiveAction("update");
-    setClickedUpdate({ id, title, minSalary, maxSalary });
-    setOpen(true);
+  const handleEditJob = (jobId: number) => {
+    const job = jobTitleList?.find((j) => j.jobId === jobId);
+    if (job) {
+      setSelectedJob({
+        id: job.jobId || 0,
+        title: job.title || "",
+        minSalary: job.minSalary || 0,
+        maxSalary: job.maxSalary || 0,
+      });
+      setActiveJobId(jobId);
+      setActiveAction("update");
+      setOpen(true);
+    }
   };
 
   return (
@@ -109,13 +108,11 @@ const Job = () => {
           </>
         )}
       </Stack>
-
       <JobCreate
         open={open}
         closeModal={handleClose}
-        clickedUpdate={clickedUpdate}
-      />
-
+        clickedUpdate={selectedJob}
+      />{" "}
       {jobTitleListStatus === APIStatus.PENDING && jobTitleList.length === 0 ? (
         <Box
           display="flex"
@@ -129,7 +126,7 @@ const Job = () => {
         <JobTitleList
           jobs={jobTitleList}
           onDelete={handleDeleteJob}
-          onUpdate={handleUpdateClick}
+          onEdit={handleEditJob}
           activeJobId={activeJobId}
           activeAction={activeAction}
         />

@@ -46,7 +46,7 @@ const Department = () => {
   //modal function
   const [open, setOpen] = useState(false);
   //state for keeping track of the department to be updated
-  const [clickedUpdate, setClickedUpdate] = useState<{
+  const [selectedDepartment, setSelectedDepartment] = useState<{
     id: number;
     name: string;
   } | null>(null);
@@ -63,7 +63,7 @@ const Department = () => {
   };
 
   const handleClose = () => {
-    setClickedUpdate(null);
+    setSelectedDepartment(null);
     setOpen(false);
     setActiveDepartmentId(null);
     setActiveAction(null);
@@ -71,18 +71,24 @@ const Department = () => {
 
   useEffect(() => {
     dispatch(fetchDepartments());
-  }, []);
+  }, [dispatch]);
 
   const handleDeleteClick = (id: number) => {
     setActiveDepartmentId(id);
     setActiveAction("delete");
     dispatch(deleteDepartment({ id }));
   };
-  const handleUpdateClick = (id: number, name: string) => {
-    setActiveDepartmentId(id);
-    setActiveAction("update");
-    setClickedUpdate({ id, name });
-    setOpen(true);
+  const handleEditDepartment = (id: number) => {
+    const department = allDepartments?.find((dept) => dept.departmentId === id);
+    if (department) {
+      setSelectedDepartment({
+        id: department.departmentId || 0,
+        name: department.departmentName || "",
+      });
+      setActiveDepartmentId(id);
+      setActiveAction("update");
+      setOpen(true);
+    }
   };
 
   return (
@@ -133,7 +139,7 @@ const Department = () => {
       <DepartmentCreate
         open={open}
         closeModal={handleClose}
-        clickedUpdate={clickedUpdate}
+        clickedUpdate={selectedDepartment}
       />
       {allDepartmentsStatus === APIStatus.PENDING &&
       allDepartments.length === 0 ? (
@@ -149,7 +155,7 @@ const Department = () => {
         <DepartmentList
           departments={allDepartments}
           onDelete={handleDeleteClick}
-          onUpdate={handleUpdateClick}
+          onEdit={handleEditDepartment}
           activeDepartmentId={activeDepartmentId}
           activeAction={activeAction}
         />
