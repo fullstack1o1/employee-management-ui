@@ -90,6 +90,10 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
   });
 
   const [salaryError, setSalaryError] = useState("");
+  const [startDateError, setStartDateError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState("");
 
   useEffect(() => {
     if (open) {
@@ -123,6 +127,10 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
         });
       }
       setSalaryError("");
+      setStartDateError("");
+      setEmailError("");
+      setSelectedFile(null);
+      setFileError("");
     }
   }, [open, clickedUpdate]);
 
@@ -152,6 +160,85 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
     return "";
   };
 
+  // Validate start date against hire date
+  const validateStartDate = (startDate: string, hireDate: string) => {
+    if (!startDate || !hireDate) return "";
+
+    const startDateObj = new Date(startDate);
+    const hireDateObj = new Date(hireDate);
+
+    if (startDateObj < hireDateObj) {
+      return "Start date cannot be before hire date";
+    }
+    return "";
+  };
+
+  // Validate email format
+  const validateEmail = (email: string) => {
+    if (!email) return "";
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address";
+    }
+    return "";
+  };
+
+  // Handle file upload with validation
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (file) {
+      // Check if the file is allowed (PDF, Word, Text files)
+      const allowedTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "text/plain",
+        "text/csv",
+        "text/xml",
+        "application/json",
+      ];
+      const fileExtension = file.name.toLowerCase().split(".").pop();
+      const allowedExtensions = [
+        "pdf",
+        "doc",
+        "docx",
+        "txt",
+        "csv",
+        "json",
+        "xml",
+        "log",
+      ];
+
+      if (
+        !allowedTypes.includes(file.type) &&
+        !allowedExtensions.includes(fileExtension || "")
+      ) {
+        setFileError(
+          "Only PDF, Word documents, and text files are allowed (.pdf, .doc, .docx, .txt, .csv, .json, .xml, .log)"
+        );
+        setSelectedFile(null);
+        event.target.value = ""; // Clear the input
+        return;
+      }
+
+      // Check file size (limit to 10MB for documents)
+      if (file.size > 10 * 1024 * 1024) {
+        setFileError("File size must be less than 10MB");
+        setSelectedFile(null);
+        event.target.value = "";
+        return;
+      }
+
+      setFileError("");
+      setSelectedFile(file);
+    } else {
+      setSelectedFile(null);
+      setFileError("");
+    }
+  };
+
   const handleInputChange = (field: string, value: string | number) => {
     setEmployee((prev) => ({ ...prev, [field]: value }));
     // When job changes, clear salary and error
@@ -160,9 +247,26 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
       setSalaryError("");
     }
 
+    // Validate email when it changes
+    if (field === "email") {
+      setEmailError(validateEmail(value as string));
+    }
+
     // Validate salary when it changes
     if (field === "salary" && employee.jobId) {
       setSalaryError(validateSalary(value));
+    }
+
+    // Validate start date when it or hire date changes
+    if (field === "startDate") {
+      setStartDateError(validateStartDate(value as string, employee.hireDate));
+    }
+    if (field === "hireDate") {
+      if (employee.startDate) {
+        setStartDateError(
+          validateStartDate(employee.startDate, value as string)
+        );
+      }
     }
   };
 
@@ -170,10 +274,27 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
     e.preventDefault();
 
     // Final validation
+    if (employee.email) {
+      const error = validateEmail(employee.email);
+      if (error) {
+        setEmailError(error);
+        return;
+      }
+    }
+
     if (employee.salary && employee.jobId) {
       const error = validateSalary(employee.salary);
       if (error) {
         setSalaryError(error);
+        return;
+      }
+    }
+
+    // Validate start date
+    if (employee.startDate && employee.hireDate) {
+      const error = validateStartDate(employee.startDate, employee.hireDate);
+      if (error) {
+        setStartDateError(error);
         return;
       }
     }
@@ -191,6 +312,7 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
       departmentId: employee.departmentId
         ? Number(employee.departmentId)
         : undefined,
+      document: selectedFile || undefined, // Include the selected file
     };
 
     if (clickedUpdate) {
@@ -218,6 +340,10 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
       departmentId: "",
     });
     setSalaryError("");
+    setStartDateError("");
+    setEmailError("");
+    setSelectedFile(null);
+    setFileError("");
     closeModal();
   };
 
@@ -276,6 +402,8 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                 type="email"
                 value={employee.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
+                error={!!emailError}
+                helperText={emailError || ""}
                 required
               />
               <TextField
@@ -314,6 +442,8 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                 type="date"
                 value={employee.startDate}
                 onChange={(e) => handleInputChange("startDate", e.target.value)}
+                error={!!startDateError}
+                helperText={startDateError || "Employee's actual start date"}
                 slotProps={{
                   inputLabel: {
                     shrink: true,
@@ -415,6 +545,44 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
                 </Select>
               </FormControl>
             </Box>
+
+            {/* File Upload Section */}
+            <Box
+              sx={{
+                border: "1px dashed #ccc",
+                borderRadius: 1,
+                p: 2,
+                textAlign: "center",
+                backgroundColor: "#fafafa",
+              }}
+            >
+              <Typography variant="body2" color="textSecondary" gutterBottom>
+                Upload Document (PDF, Word, or Text files)
+              </Typography>
+              <Button variant="outlined" component="label" sx={{ mb: 1 }}>
+                Choose File
+                <input
+                  type="file"
+                  hidden
+                  accept=".pdf,.doc,.docx,.txt,.csv,.json,.xml,.log,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/csv,application/json,text/xml"
+                  onChange={handleFileChange}
+                />
+              </Button>
+              {selectedFile && (
+                <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                  Selected: {selectedFile.name}
+                </Typography>
+              )}
+              {fileError && (
+                <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                  {fileError}
+                </Typography>
+              )}
+              {/* <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+                Supported formats: .pdf, .doc, .docx, .txt, .csv, .json, .xml,
+                .log (Max: 10MB)
+              </Typography> */}
+            </Box>
           </Stack>
 
           <Box
@@ -438,7 +606,9 @@ const EmployeeCreate: React.FC<EmployeeCreateModalProps> = ({
             <Button
               type="submit"
               variant="contained"
-              disabled={!!salaryError}
+              disabled={
+                !!salaryError || !!startDateError || !!emailError || !!fileError
+              }
               sx={{
                 width: { xs: "100%", sm: "auto" },
               }}
