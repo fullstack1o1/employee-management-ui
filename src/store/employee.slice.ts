@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Api, type EmployeeRequest, type EmployeeResponse } from "../myApi";
-import { APIStatus, type IApiResponse } from "./department.slice";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { Api, type EmployeeRequest, type EmployeeResponse } from '../myApi';
+import { APIStatus, type IApiResponse } from './department.slice';
 
 interface IState {
   employees: IApiResponse<EmployeeResponse[]>;
@@ -11,7 +11,7 @@ interface IState {
 
 const api = new Api({
   baseUrl:
-    "https://employee-app.whitewater-d0b6f62a.westeurope.azurecontainerapps.io/api",
+    'https://employee-app.whitewater-d0b6f62a.westeurope.azurecontainerapps.io/api',
 });
 
 const initialState: IState = {
@@ -22,7 +22,7 @@ const initialState: IState = {
 };
 // fetch all employee list
 export const fetchEmployees = createAsyncThunk(
-  "employee/fetchEmployees",
+  'employee/fetchEmployees',
   async () => {
     const res = await api.employee.employeeList();
     console.log(res.data);
@@ -33,14 +33,17 @@ export const fetchEmployees = createAsyncThunk(
 export const createEmployee = createAsyncThunk<
   EmployeeResponse,
   EmployeeRequest
->("employee/createEmployee", async (employeeData: EmployeeRequest) => {
-  const res = await api.employee.multipartCreate(employeeData);
+>('employee/createEmployee', async (employeeData: EmployeeRequest) => {
+  const res = await api.employee.multipartCreate({
+    ...employeeData,
+    documents: employeeData?.employeeDocuments?.[0].documentContent!,
+  });
   console.log(res.data);
   return res.data;
 });
 // delete employee by its ID
 export const deleteEmployee = createAsyncThunk(
-  "employee/deleteEmployee",
+  'employee/deleteEmployee',
   async ({ id }: { id: number }) => {
     const res = await api.employee.employeeDelete(id);
     return res.data;
@@ -51,13 +54,13 @@ export const deleteEmployee = createAsyncThunk(
 export const updateEmployee = createAsyncThunk<
   EmployeeResponse,
   { id: number; employeeData: EmployeeRequest }
->("employee/updateEmployee", async ({ id, employeeData }) => {
+>('employee/updateEmployee', async ({ id, employeeData }) => {
   const res = await api.employee.employeeUpdate(id, employeeData);
   return res.data;
 });
 
 export const employeeSlice = createSlice({
-  name: "emp",
+  name: 'emp',
   initialState,
   reducers: {},
   extraReducers(builder) {
@@ -69,7 +72,7 @@ export const employeeSlice = createSlice({
       })
       .addCase(fetchEmployees.rejected, (state) => {
         state.employees.status = APIStatus.FAILED;
-        state.employees.error = "Some Error Occured";
+        state.employees.error = 'Some Error Occured';
       })
       .addCase(fetchEmployees.fulfilled, (state, action) => {
         state.employees.status = APIStatus.FULLFILLED;
@@ -81,7 +84,7 @@ export const employeeSlice = createSlice({
       })
       .addCase(createEmployee.rejected, (state) => {
         state.createEmployee.status = APIStatus.FAILED;
-        state.createEmployee.error = "Some Error Occured";
+        state.createEmployee.error = 'Some Error Occured';
       })
       .addCase(createEmployee.fulfilled, (state, action) => {
         state.createEmployee.status = APIStatus.FULLFILLED;
@@ -94,7 +97,7 @@ export const employeeSlice = createSlice({
       })
       .addCase(updateEmployee.rejected, (state) => {
         state.updateEmployee.status = APIStatus.FAILED;
-        state.updateEmployee.error = "Some Error Occured";
+        state.updateEmployee.error = 'Some Error Occured';
       })
       .addCase(updateEmployee.fulfilled, (state, action) => {
         state.updateEmployee.status = APIStatus.FULLFILLED;
@@ -113,7 +116,7 @@ export const employeeSlice = createSlice({
       })
       .addCase(deleteEmployee.rejected, (state) => {
         state.deleteEmployee.status = APIStatus.FAILED;
-        state.deleteEmployee.error = "Some Error Occured";
+        state.deleteEmployee.error = 'Some Error Occured';
       })
       .addCase(deleteEmployee.fulfilled, (state, action) => {
         state.deleteEmployee.status = APIStatus.FULLFILLED;
